@@ -2,10 +2,31 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import { ArrowRight, CheckCircle2, Users, Loader2, Star } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
-export default function Page() {
+interface ErrorState {
+  nama?: string
+  email?: string
+  whatsapp?: string
+  universitas?: string
+  paket?: string
+}
+
+export default function Home() {
+  const router = useRouter()
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const [formData, setFormData] = useState({
+    nama: "",
+    email: "",
+    whatsapp: "",
+    universitas: "",
+    paket: ""
+  })
+  const [errors, setErrors] = useState<ErrorState>({})
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver((entries) => {
@@ -26,457 +47,565 @@ export default function Page() {
     return () => observerRef.current?.disconnect();
   }, []);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    const newErrors: any = {}
+    if (!formData.nama) newErrors.nama = "Nama harus diisi"
+    if (!formData.email) newErrors.email = "Email harus diisi"
+    if (!formData.whatsapp) newErrors.whatsapp = "WhatsApp harus diisi"
+    if (!formData.universitas) newErrors.universitas = "Universitas harus diisi"
+    if (!formData.paket) newErrors.paket = "Paket harus dipilih"
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Terjadi kesalahan')
+      }
+
+      toast.success("Pendaftaran berhasil! Tim kami akan menghubungi Anda segera.")
+      setFormData({
+        nama: "",
+        email: "",
+        whatsapp: "",
+        universitas: "",
+        paket: ""
+      })
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.message || "Terjadi kesalahan. Silakan coba lagi.")
+    }
+    setIsLoading(false)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }))
+    }
+  }
+
+  const handlePilihPaket = (paket: string) => {
+    const element = document.getElementById('daftar-section')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+      setFormData(prev => ({ ...prev, paket }))
+    }
+  }
+
   return (
-    <div className="flex flex-col min-h-screen bg-black text-foreground">
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-100 to-white">
+      {/* Header/Navigation */}
+      <header className="fixed top-0 w-full bg-white shadow-md z-50">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          {/* Logo dan Nama */}
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-10 h-10 bg-[#0066FF] rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xl">PS</span>
+            </div>
+            <span className="text-xl font-bold text-[#0066FF]">Pintu Sejawat</span>
+          </Link>
 
-        @keyframes shimmer {
-          0% { background-position: 0% 0; }
-          100% { background-position: 200% 0; }
-        }
-
-        .fade-in {
-          animation: fadeIn 0.8s ease-out forwards;
-          opacity: 0;
-        }
-
-        .delay-1 { animation-delay: 0.2s; }
-        .delay-2 { animation-delay: 0.4s; }
-        .delay-3 { animation-delay: 0.6s; }
-        
-        .glimmer-card {
-          position: relative;
-          background: rgb(23, 23, 23);
-          border-radius: 12px;
-          overflow: hidden;
-        }
-        
-        .glimmer-card::before {
-          content: '';
-          position: absolute;
-          inset: -1px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(236, 72, 153, 0.03),
-            rgba(236, 72, 153, 0.06),
-            rgba(236, 72, 153, 0.03),
-            transparent
-          );
-          background-size: 200% 100%;
-          animation: shimmer 8s ease-in-out infinite;
-          pointer-events: none;
-        }
-
-        .glimmer-pill {
-          position: relative;
-          background: rgb(23, 23, 23);
-          border-radius: 9999px;
-          overflow: hidden;
-        }
-        
-        .glimmer-pill::before {
-          content: '';
-          position: absolute;
-          inset: -1px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(236, 72, 153, 0.03),
-            rgba(236, 72, 153, 0.06),
-            rgba(236, 72, 153, 0.03),
-            transparent
-          );
-          background-size: 200% 100%;
-          animation: shimmer 8s ease-in-out infinite;
-          pointer-events: none;
-        }
-
-        .hero-glow {
-          position: absolute;
-          top: 85%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 140%;
-          height: 600px;
-          background: radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.08) 0%,
-            rgba(255, 255, 255, 0.03) 35%,
-            transparent 70%
-          );
-          pointer-events: none;
-          z-index: 0;
-          filter: blur(50px);
-        }
-
-        .scroll-animation {
-          opacity: 0;
-          transform: translateY(20px);
-          transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .scroll-animation.animate-in {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .scroll-delay-1 { transition-delay: 0.1s; }
-        .scroll-delay-2 { transition-delay: 0.2s; }
-        .scroll-delay-3 { transition-delay: 0.3s; }
-      `}</style>
-
-      {/* Navigation */}
-      <header className="flex items-center justify-between py-4 px-6 border-b border-neutral-800/50">
-        <Link href="/" className="text-lg font-semibold">
-          Software Composer LP
-        </Link>
-        <nav className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/login">Log in</Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link href="/signup">Sign up</Link>
-          </Button>
-        </nav>
+          {/* Tombol-tombol */}
+          <div className="flex items-center space-x-3">
+            <Button
+              onClick={() => document.getElementById('cta-section')?.scrollIntoView({ behavior: 'smooth' })}
+              variant="ghost" 
+              className="text-[#0066FF] hover:text-[#0066FF] hover:bg-blue-50 px-6"
+            >
+              Coba Gratis
+            </Button>
+            <Link href="/login">
+              <Button 
+                variant="ghost" 
+                className="text-[#0066FF] hover:text-[#0066FF] hover:bg-blue-50 px-6"
+              >
+                Login
+              </Button>
+            </Link>
+            <Button 
+              onClick={() => document.getElementById('daftar-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-[#0066FF] hover:bg-blue-700 text-white px-6"
+            >
+              Daftar Sekarang
+            </Button>
+          </div>
+        </div>
       </header>
 
-      <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="py-20 px-6 relative">
-          <div className="hero-glow" />
-          <div className="max-w-[1200px] mx-auto text-center relative z-10">
-            <div className="inline-flex items-center px-3 py-1 text-sm text-neutral-400 mb-8 glimmer-pill fade-in">
-              <span>3 Prompts to a Perfect Landing Page</span>
-            </div>
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight fade-in delay-1">
-              The Cursor Template<br />For Landing Pages
-            </h1>
-            <p className="text-xl text-neutral-400 mb-8 max-w-2xl mx-auto fade-in delay-2">
-              Create stunning landing pages in minutes, not months. Save $10,000+ on design and development
-              with our Cursor-powered template.
-            </p>
-            <div className="fade-in delay-3">
-              <Button size="lg" className="rounded-full">
-                Download Template
-              </Button>
-            </div>
-          </div>
+      {/* Hero Section */}
+      <main className="flex-1 pt-24">
+        <section className="container mx-auto px-4 py-16 text-center">
+          <h1 className="text-5xl font-bold text-blue-900 mb-6">
+            Persiapkan Ujian Apoteker Anda Bersama{" "}
+            <span className="text-blue-700">Pintu Sejawat</span>
+          </h1>
+          <p className="text-xl text-blue-800 mb-8 max-w-2xl mx-auto">
+            Platform bimbingan belajar online terpercaya untuk membantu Anda lulus ujian apoteker dengan persiapan yang maksimal
+          </p>
+          <Button 
+            onClick={() => document.getElementById('daftar-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-blue-700 hover:bg-blue-800 text-white text-lg px-8 py-6"
+          >
+            Mulai Belajar Sekarang <ArrowRight className="ml-2" />
+          </Button>
         </section>
 
-        {/* Demo Section */}
-        <section className="py-20 px-6">
-          <div className="max-w-[1200px] mx-auto scroll-animation">
-            <div className="glimmer-card">
-              <div className="bg-neutral-900">
-                <div className="flex items-center gap-2 p-2 md:p-3 border-b border-neutral-800">
-                  <div className="flex gap-1.5 md:gap-2">
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500" />
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-500" />
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500" />
-                  </div>
+        {/* Statistics Section - NEW */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+              <div className="text-center p-6 bg-blue-50 rounded-xl transform hover:scale-105 transition-all">
+                <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-blue-700" />
                 </div>
-                <div className="flex flex-col md:flex-row h-[500px] md:h-[700px]">
-                  {/* Sidebar */}
-                  <div className="hidden md:block md:w-64 border-r border-neutral-800 p-4 flex-shrink-0">
-                    <div className="flex items-center gap-2 p-2 bg-neutral-800 rounded-lg mb-4">
-                      <div className="w-8 h-8 rounded-full bg-neutral-700" />
-                      <span>Cursor AI</span>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Prompts</span>
-                        <span className="text-sm text-neutral-500">3</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Components</span>
-                        <span className="text-sm text-neutral-500">25+</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Time Saved</span>
-                        <span className="text-sm text-neutral-500">100h+</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Money Saved</span>
-                        <span className="text-sm text-green-500">$10k+</span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Mobile Stats Bar */}
-                  <div className="md:hidden w-full border-b border-neutral-800 p-3 bg-neutral-800/50">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-neutral-700" />
-                        <span className="text-sm font-medium">Cursor AI</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs">
-                        <span className="text-neutral-400">3 Prompts</span>
-                        <span className="text-green-500 font-medium">$10k+ Saved</span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Main Content */}
-                  <div className="flex-1 flex flex-col p-3 md:p-4 overflow-hidden">
-                    <div className="flex items-center justify-between mb-4 sticky top-0">
-                      <input
-                        type="text"
-                        placeholder="Enter your prompt here..."
-                        className="w-full max-w-2xl px-3 md:px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700 text-sm md:text-base placeholder:text-neutral-500"
-                      />
-                      <div className="flex items-center gap-1 md:gap-2 ml-2">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
-                          <span className="sr-only">Generate</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v19"/><path d="M5 12h14"/></svg>
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
-                          <span className="sr-only">Save</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="space-y-4 overflow-y-auto flex-1 pr-1">
-                      <div className="p-4 rounded-lg bg-neutral-800">
-                        <div className="flex items-center gap-3 md:gap-4 mb-2">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-neutral-700 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-medium text-sm md:text-base">Cursor AI</h3>
-                            <p className="text-xs md:text-sm text-neutral-400">Prompt #1: Hero Section</p>
-                          </div>
-                          <div className="text-xs md:text-sm text-green-400 flex-shrink-0">
-                            Generated in 2s
-                          </div>
-                        </div>
-                        <p className="text-sm md:text-base text-neutral-300">
-                          I&apos;ll create a modern, attention-grabbing hero section for your landing page. 
-                          Just describe your product&apos;s main value proposition, and I&apos;ll generate the perfect
-                          layout with compelling copy and visuals.
-                        </p>
-                      </div>
-
-                      <div className="p-6 md:p-8 rounded-lg bg-neutral-800/50 border border-neutral-700 border-dashed text-center">
-                        <div className="mb-4">
-                          <svg className="mx-auto w-10 h-10 md:w-12 md:h-12 text-neutral-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                        <h3 className="text-lg md:text-xl font-semibold mb-2">Upload any image and get any fucking landing page you want</h3>
-                        <p className="text-sm md:text-base text-neutral-400 mb-4">Drag and drop an image, or click to browse</p>
-                        <Button variant="outline" size="lg" className="h-9 md:h-10 text-sm md:text-base">
-                          Choose Image
-                        </Button>
-                      </div>
-
-                      <div className="p-4 rounded-lg bg-neutral-800">
-                        <div className="flex items-center gap-3 md:gap-4 mb-2">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-neutral-700 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-medium text-sm md:text-base">Cursor AI</h3>
-                            <p className="text-xs md:text-sm text-neutral-400">Image Analysis</p>
-                          </div>
-                          <div className="text-xs md:text-sm text-neutral-400 flex-shrink-0">
-                            Waiting for image...
-                          </div>
-                        </div>
-                        <p className="text-sm md:text-base text-neutral-300">
-                          yup its really that easy, download the template, open it in cursor, upload an image, and i will create that website... like legit
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <div className="text-3xl font-bold text-blue-800 mb-2">1000+</div>
+                <p className="text-blue-600">Peserta Aktif</p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-32 px-6 border-t border-neutral-800">
-          <div className="max-w-[1200px] mx-auto">
-            <div className="text-center mb-24 scroll-animation">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Create in Minutes, Not Months</h2>
-              <p className="text-neutral-400">Transform your ideas into reality with three simple prompts.</p>
-            </div>
-
-            <div className="relative">
-              {/* Decorative line connecting the steps */}
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-neutral-800 via-pink-500/20 to-neutral-800 hidden md:block" />
-              
-              <div className="grid md:grid-cols-3 gap-24 relative">
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800 scroll-animation scroll-delay-1">
-                  <div className="text-2xl mb-6">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                      <polyline points="7 10 12 15 17 10"/>
-                      <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">Download Template</h3>
-                  <p className="text-neutral-400">
-                    Get started with our production-ready template. It&apos;s packed with everything you need to build a stunning landing page.
-                  </p>
+              <div className="text-center p-6 bg-blue-50 rounded-xl transform hover:scale-105 transition-all">
+                <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-blue-700" />
                 </div>
-
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800 scroll-animation scroll-delay-2">
-                  <div className="text-2xl mb-6">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">Tell Cursor What You Want</h3>
-                  <p className="text-neutral-400">
-                    Describe your vision in plain English. Cursor will transform your words into a beautiful, functional design.
-                  </p>
+                <div className="text-3xl font-bold text-blue-800 mb-2">95%</div>
+                <p className="text-blue-600">Tingkat Kelulusan</p>
+              </div>
+              <div className="text-center p-6 bg-blue-50 rounded-xl transform hover:scale-105 transition-all">
+                <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-blue-700" />
                 </div>
-
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800 scroll-animation scroll-delay-3">
-                  <div className="text-2xl mb-6">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"/>
-                      <line x1="2" y1="12" x2="22" y2="12"/>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">Deploy to the Internet</h3>
-                  <p className="text-neutral-400">
-                    Push your new landing page live with one click. Share your creation with the world in seconds.
-                  </p>
+                <div className="text-3xl font-bold text-blue-800 mb-2">4.9/5</div>
+                <p className="text-blue-600">Rating Kepuasan</p>
+              </div>
+              <div className="text-center p-6 bg-blue-50 rounded-xl transform hover:scale-105 transition-all">
+                <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-blue-700" />
                 </div>
+                <div className="text-3xl font-bold text-blue-800 mb-2">24/7</div>
+                <p className="text-blue-600">Dukungan Mentor</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* Pricing Section */}
-        <section className="py-20 px-6 border-t border-neutral-800">
-          <div className="max-w-[1200px] mx-auto text-center">
-            <div className="scroll-animation">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Pricing (Plot Twist: It&apos;s All Free)</h2>
-              <p className="text-neutral-400 mb-12">Because great tools shouldn&apos;t cost a fortune. Or anything.</p>
+        <section className="bg-blue-50 py-20">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-blue-900 text-center mb-12">Pilih Paket Belajar Anda</h2>
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {/* Gold Package */}
+              <div className="bg-gradient-to-b from-amber-100 to-white p-8 rounded-2xl border-2 border-amber-200 hover:border-amber-500 transition-all">
+                <h3 className="text-2xl font-bold text-amber-900 mb-2">Gold</h3>
+                <p className="text-3xl font-bold text-amber-600 mb-4">Rp 349.000</p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-amber-600 mr-2" />
+                    <span>Bimbel 3 bulan</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-amber-600 mr-2" />
+                    <span>Tryout</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-amber-600 mr-2" />
+                    <span>Latihan Soal</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-amber-600 mr-2" />
+                    <span>Modul</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => handlePilihPaket('gold')}
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                >
+                  Pilih Paket
+                </Button>
+              </div>
+
+              {/* Diamond Package */}
+              <div className="bg-gradient-to-b from-blue-100 to-white p-8 rounded-2xl border-2 border-blue-200 hover:border-blue-500 transition-all">
+                <h3 className="text-2xl font-bold text-blue-900 mb-2">Diamond</h3>
+                <p className="text-3xl font-bold text-blue-600 mb-4">Rp 599.000</p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-blue-600 mr-2" />
+                    <span>Bimbel sampai lulus</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-blue-600 mr-2" />
+                    <span>Tryout</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-blue-600 mr-2" />
+                    <span>Latihan soal</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-blue-600 mr-2" />
+                    <span>Modul</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-blue-600 mr-2" />
+                    <span>24 jam tanya jawab dengan mentor</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => handlePilihPaket('diamond')}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Pilih Paket
+                </Button>
+              </div>
+
+              {/* Silver Package */}
+              <div className="bg-gradient-to-b from-gray-100 to-white p-8 rounded-2xl border-2 border-gray-200 hover:border-gray-500 transition-all">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Silver</h3>
+                <p className="text-3xl font-bold text-gray-600 mb-4">Rp 199.000</p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-gray-600 mr-2" />
+                    <span>Bimbel 3 bulan</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-gray-600 mr-2" />
+                    <span>Tryout</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="text-gray-600 mr-2" />
+                    <span>Latihan Soal</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => handlePilihPaket('silver')}
+                  className="w-full bg-gray-600 hover:bg-gray-700 text-white"
+                >
+                  Pilih Paket
+                </Button>
+              </div>
             </div>
-            <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="col-span-1">
-                {/* Starter Plan */}
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800">
-                  <h3 className="text-xl font-semibold mb-2">Starter</h3>
-                  <div className="text-3xl font-bold mb-4">$0</div>
-                  <p className="text-neutral-400 mb-6">Perfect for getting started</p>
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Basic features
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Community support
-                    </li>
-                  </ul>
-                  <Button className="w-full" variant="outline">Get Started</Button>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-blue-900 text-center mb-12">Mengapa Memilih Pintu Sejawat?</h2>
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              <div className="text-center p-6 bg-blue-50 rounded-xl">
+                <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
                 </div>
+                <h3 className="text-xl font-bold text-blue-800 mb-2">Materi Berkualitas</h3>
+                <p className="text-blue-700">Dikembangkan oleh para ahli di bidang kefarmasian</p>
               </div>
-              <div className="col-span-1">
-                {/* Pro Plan */}
-                <div className="bg-neutral-900 p-8 rounded-xl border-2 border-pink-500/20 relative">
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-pink-500/10 text-pink-500 px-3 py-1 rounded-full text-xs font-medium">
-                    Most Popular
+              <div className="text-center p-6 bg-blue-50 rounded-xl">
+                <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-blue-800 mb-2">Belajar Fleksibel</h3>
+                <p className="text-blue-700">Akses materi kapanpun dan dimanapun</p>
+              </div>
+              <div className="text-center p-6 bg-blue-50 rounded-xl">
+                <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-blue-800 mb-2">Mentor Berpengalaman</h3>
+                <p className="text-blue-700">Dibimbing langsung oleh apoteker profesional</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section - NEW */}
+        <section className="py-20 bg-gradient-to-b from-white to-blue-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-blue-900 text-center mb-12">Apa Kata Mereka?</h2>
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {/* Testimonial 1 */}
+              <div className="bg-white p-8 rounded-xl shadow-lg border-2 border-blue-100 hover:border-blue-300 transition-all transform hover:-translate-y-1">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-blue-700 font-bold">DA</span>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Pro</h3>
-                  <div className="text-2xl font-bold mb-1">$0</div>
-                  <div className="text-xs text-neutral-400 mb-4">Save $0 when you pay yearly!</div>
-                  <p className="text-sm text-neutral-400 mb-6">Everything you need</p>
-                  <ul className="space-y-4 mb-8 text-sm">
-                    <li className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Everything in Starter
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Advanced features (free)
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Priority support (also free)
-                    </li>
-                  </ul>
-                  <Button className="w-full text-sm">Upgrade for $0</Button>
+                  <div>
+                    <h4 className="font-bold text-blue-900">Dr. Anita</h4>
+                    <p className="text-blue-600 text-sm">Lulus Ujian Apoteker 2023</p>
+                  </div>
                 </div>
-              </div>
-              <div className="col-span-1">
-                {/* Enterprise Plan */}
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800">
-                  <h3 className="text-xl font-semibold mb-2">Enterprise</h3>
-                  <div className="text-3xl font-bold mb-4">$0</div>
-                  <p className="text-neutral-400 mb-6">For larger teams</p>
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Everything in Pro
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Custom features (free)
-                    </li>
-                  </ul>
-                  <Button className="w-full" variant="outline">Contact Sales</Button>
+                <div className="flex text-yellow-400 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-current" />
+                  ))}
                 </div>
+                <p className="text-blue-800">"Berkat bimbingan dari Pintu Sejawat, saya berhasil lulus ujian apoteker dengan nilai memuaskan. Materinya lengkap dan mentornya sangat membantu."</p>
               </div>
+
+              {/* Testimonial 2 */}
+              <div className="bg-white p-8 rounded-xl shadow-lg border-2 border-blue-100 hover:border-blue-300 transition-all transform hover:-translate-y-1">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-blue-700 font-bold">RB</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-blue-900">Rudi Budiman</h4>
+                    <p className="text-blue-600 text-sm">Lulus Ujian Apoteker 2023</p>
+                  </div>
+                </div>
+                <div className="flex text-yellow-400 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-current" />
+                  ))}
+                </div>
+                <p className="text-blue-800">"Platform yang sangat membantu! Saya bisa belajar kapan saja dan dimana saja. Try out yang diberikan sangat mirip dengan soal ujian yang sebenarnya."</p>
+              </div>
+
+              {/* Testimonial 3 */}
+              <div className="bg-white p-8 rounded-xl shadow-lg border-2 border-blue-100 hover:border-blue-300 transition-all transform hover:-translate-y-1">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-blue-700 font-bold">SM</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-blue-900">Siti Maryam</h4>
+                    <p className="text-blue-600 text-sm">Lulus Ujian Apoteker 2024</p>
+                  </div>
+                </div>
+                <div className="flex text-yellow-400 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-current" />
+                  ))}
+                </div>
+                <p className="text-blue-800">"Mentor-mentornya sangat responsif dan selalu siap membantu. Materi yang diberikan sangat terstruktur dan mudah dipahami."</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section - NEW */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-blue-900 text-center mb-12">Pertanyaan Yang Sering Diajukan</h2>
+            <div className="max-w-3xl mx-auto space-y-4">
+              {[
+                {
+                  q: "Berapa lama waktu belajar yang dibutuhkan?",
+                  a: "Waktu belajar fleksibel tergantung paket yang Anda pilih. Paket DIAMOND memberikan akses belajar sampai lulus, sementara paket GOLD dan SILVER memberikan akses selama 3 bulan."
+                },
+                {
+                  q: "Apakah ada jaminan kelulusan?",
+                  a: "Kami memiliki tingkat kelulusan 95% dan memberikan perpanjangan akses gratis jika Anda belum lulus pada paket DIAMOND."
+                },
+                {
+                  q: "Bagaimana sistem belajarnya?",
+                  a: "Sistem belajar online melalui platform kami dengan akses ke video pembelajaran, modul digital, latihan soal, dan bimbingan langsung dari mentor berpengalaman."
+                },
+                {
+                  q: "Apakah bisa konsultasi dengan mentor kapan saja?",
+                  a: "Ya, khusus untuk paket DIAMOND tersedia layanan konsultasi 24/7 dengan mentor. Untuk paket lain, konsultasi tersedia pada jam kerja."
+                },
+                {
+                  q: "Bagaimana cara pembayarannya?",
+                  a: "Kami menerima pembayaran melalui transfer bank, e-wallet, dan kartu kredit."
+                }
+              ].map((faq, index) => (
+                <div key={index} className="bg-blue-50 rounded-lg p-6 hover:bg-blue-100 transition-all">
+                  <h3 className="text-lg font-bold text-blue-900 mb-2">{faq.q}</h3>
+                  <p className="text-blue-800">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Registration Form - UPDATED */}
+        <section id="daftar-section" className="py-20 bg-gradient-to-b from-blue-50 to-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-2 border-blue-100">
+              <h2 className="text-4xl font-bold text-blue-900 text-center mb-8">Daftar Sekarang</h2>
+              <p className="text-blue-700 text-center mb-8">Mulai perjalanan Anda menuju kelulusan ujian apoteker</p>
+              
+              <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-blue-900 font-medium block">Nama Lengkap</label>
+                  <input 
+                    type="text"
+                    name="nama"
+                    value={formData.nama}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-blue-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-900 bg-white"
+                    placeholder="Masukkan nama lengkap"
+                  />
+                  {errors?.nama && <p className="text-red-500 text-sm mt-1">{errors.nama}</p>}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-blue-900 font-medium block">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-blue-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-900 bg-white"
+                    placeholder="Masukkan email aktif"
+                  />
+                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-blue-900 font-medium block">WhatsApp</label>
+                  <input 
+                    type="tel"
+                    name="whatsapp"
+                    value={formData.whatsapp}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-blue-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-900 bg-white"
+                    placeholder="Contoh: 08123456789"
+                  />
+                  {errors.whatsapp && <p className="text-red-500 text-sm mt-1">{errors.whatsapp}</p>}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-blue-900 font-medium block">Universitas</label>
+                  <input 
+                    type="text"
+                    name="universitas"
+                    value={formData.universitas}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-blue-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-900 bg-white"
+                    placeholder="Asal universitas"
+                  />
+                  {errors.universitas && <p className="text-red-500 text-sm mt-1">{errors.universitas}</p>}
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-blue-900 font-medium block">Pilih Paket</label>
+                  <select 
+                    name="paket"
+                    value={formData.paket}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-blue-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-900 bg-white"
+                  >
+                    <option value="">Pilih paket belajar</option>
+                    <option value="diamond">Diamond - Rp 599.000</option>
+                    <option value="gold">Gold - Rp 349.000</option>
+                    <option value="silver">Silver - Rp 199.000</option>
+                  </select>
+                  {errors.paket && <p className="text-red-500 text-sm mt-1">{errors.paket}</p>}
+                </div>
+                <div className="md:col-span-2">
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-[#0066FF] hover:bg-blue-700 text-white py-4 text-lg font-medium disabled:opacity-50"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Memproses...
+                      </>
+                    ) : (
+                      "Daftar Sekarang"
+                    )}
+                  </Button>
+                  <p className="text-sm text-blue-600 text-center mt-4">
+                    Dengan mendaftar, Anda menyetujui syarat dan ketentuan yang berlaku
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section id="cta-section" className="py-20 bg-blue-900 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl font-bold mb-6">Siap Untuk Mulai?</h2>
+            <p className="text-xl text-blue-200 mb-8 max-w-2xl mx-auto">
+              Bergabunglah dengan ribuan calon apoteker lainnya yang telah berhasil meraih impian mereka bersama Pintu Sejawat
+            </p>
+            <div className="flex flex-col md:flex-row gap-4 justify-center">
+              <Button 
+                onClick={() => router.push('/trial')}
+                className="bg-white text-blue-900 hover:bg-blue-100 text-lg px-8 py-6"
+              >
+                Mulai Simulasi Tryout
+              </Button>
+              <Button 
+                onClick={() => document.getElementById('daftar-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-transparent border-2 border-white hover:bg-blue-800 text-lg px-8 py-6"
+              >
+                Konsultasi Dengan Tim Kami
+              </Button>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="py-8 px-6 border-t border-neutral-800/50 scroll-animation">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between">
-          <div className="text-sm text-neutral-400">
-            © 2024 Software Composer LP. All rights reserved.
+      {/* Footer */}
+      <footer className="bg-blue-900 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                  <span className="text-blue-700 font-bold text-xl">PS</span>
+                </div>
+                <span className="text-xl font-bold">Pintu Sejawat</span>
+              </div>
+              <p className="text-blue-200">Platform bimbingan belajar terpercaya untuk calon apoteker Indonesia</p>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-white mb-4">Layanan</h4>
+              <ul className="space-y-2 text-blue-200">
+                <li>Bimbingan Belajar</li>
+                <li>Try Out</li>
+                <li>Latihan Soal</li>
+                <li>Konsultasi</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-white mb-4">Kontak</h4>
+              <ul className="space-y-2 text-blue-200">
+                <li>Email: info@pintusejawat.com</li>
+                <li>WhatsApp: +62 812-3456-7890</li>
+                <li>Instagram: @pintusejawat</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-white mb-4">Alamat</h4>
+              <p className="text-blue-200">
+                Jl. Apoteker No. 123<br />
+                Jakarta Selatan<br />
+                Indonesia
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">Twitter</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
-              </svg>
-            </a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">GitHub</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-              </svg>
-            </a>
-            <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">Discord</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 6h0a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-7a3 3 0 0 1-3-3v0"/>
-                <path d="M6 18v-7a3 3 0 0 1 3-3h7"/>
-                <circle cx="8" cy="12" r="1"/>
-                <circle cx="16" cy="12" r="1"/>
-              </svg>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">LinkedIn</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-                <rect x="2" y="9" width="4" height="12"/>
-                <circle cx="4" cy="4" r="2"/>
-              </svg>
-            </a>
+          <div className="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
+            <p>&copy; 2024 Pintu Sejawat. All rights reserved.</p>
           </div>
         </div>
       </footer>
