@@ -21,6 +21,7 @@ import {
   Trophy
 } from 'lucide-react';
 import { ModeToggle } from '@/components/layout/ThemeToggle/theme-toggle';
+import Image from 'next/image';
 
 export default async function Home() {
   const { userId } = await auth();
