@@ -197,7 +197,7 @@ export default function AppSidebar({
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
-                        tooltip={item.title}
+                        title={item.title}
                         isActive={pathname === item.href}
                       >
                         {Icon && <Icon className='size-4' />}
@@ -212,7 +212,7 @@ export default function AppSidebar({
                           return (
                             <SidebarMenuSubItem key={subItem.title}>
                               <SidebarMenuSubButton
-                                tooltip={subItem.title}
+                                title={subItem.title}
                                 isActive={pathname === subItem.href}
                                 onClick={() => router.push(subItem.href)}
                               >
@@ -229,7 +229,7 @@ export default function AppSidebar({
               ) : (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    tooltip={item.title}
+                    title={item.title}
                     isActive={pathname === item.href}
                     onClick={() => router.push(item.href)}
                   >
