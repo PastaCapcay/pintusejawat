@@ -1,7 +1,6 @@
-import { usePathname } from '@/hooks/usePathname';
+import { usePathname, useRouter } from 'next/navigation';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useUser } from '@/contexts/UserContext';
-import { useRouter } from 'next/navigation';
 import {
   Sidebar,
   SidebarHeader,
@@ -21,8 +20,7 @@ import {
   CollapsibleContent
 } from '@/components/ui/collapsible';
 import { IconChevronRight } from '@tabler/icons-react';
-import { LucideIcon } from '@/components/icons/lucide-icon';
-import { OrgSwitcher } from '@/components/org-switcher';
+import type { LucideIcon } from 'lucide-react';
 import {
   Trophy,
   CreditCard,
@@ -33,6 +31,22 @@ import {
   PencilRuler,
   BookOpen
 } from 'lucide-react';
+import { OrgSwitcher } from '@/components/org-switcher';
+import { LayoutDashboard } from 'lucide-react';
+
+interface NavigationItem {
+  title: string;
+  href: string;
+  icon: LucideIcon;
+  color?: string;
+  isActive?: boolean;
+  items?: {
+    title: string;
+    href: string;
+    icon: LucideIcon;
+    shortcut?: string[];
+  }[];
+}
 
 export default function AppSidebar({
   userGrade
@@ -45,7 +59,7 @@ export default function AppSidebar({
   const router = useRouter();
 
   // Filter menu berdasarkan grade
-  const getFilteredMenu = () => {
+  const getFilteredMenu = (): NavigationItem[] => {
     const baseMenu = [
       {
         title: 'Dashboard Overview',
@@ -76,6 +90,7 @@ export default function AppSidebar({
       title: 'Account',
       href: '/dashboarduser/profile',
       icon: UserCircle,
+      color: 'text-gray-500',
       isActive: true,
       items: [
         {
@@ -164,18 +179,14 @@ export default function AppSidebar({
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <OrgSwitcher
-          tenants={tenants}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        {/* Removed OrgSwitcher since it's not needed */}
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navigationItems.map((item) => {
-              const Icon = item.icon as LucideIcon;
+              const Icon = item.icon;
               return item?.items && item?.items?.length > 0 ? (
                 <Collapsible
                   key={item.title}
@@ -197,12 +208,13 @@ export default function AppSidebar({
                     <CollapsibleContent asChild>
                       <SidebarMenuSub>
                         {item.items.map((subItem) => {
-                          const SubIcon = subItem.icon as LucideIcon;
+                          const SubIcon = subItem.icon;
                           return (
                             <SidebarMenuSubItem key={subItem.title}>
                               <SidebarMenuSubButton
-                                href={subItem.href}
+                                tooltip={subItem.title}
                                 isActive={pathname === subItem.href}
+                                onClick={() => router.push(subItem.href)}
                               >
                                 {SubIcon && <SubIcon className='size-4' />}
                                 <span>{subItem.title}</span>
@@ -217,9 +229,9 @@ export default function AppSidebar({
               ) : (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    href={item.href}
                     tooltip={item.title}
                     isActive={pathname === item.href}
+                    onClick={() => router.push(item.href)}
                   >
                     {Icon && <Icon className='size-4' />}
                     <span>{item.title}</span>
