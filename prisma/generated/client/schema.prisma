@@ -1,0 +1,89 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "./generated/client"
+  engineType      = "binary"
+  previewFeatures = []
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  clerkId       String          @unique
+  email         String          @unique
+  name          String?
+  role          Role            @default(USER)
+  grade         Grade           @default(FREE)
+  createdAt     DateTime        @default(now())
+  tryoutHistory TryoutHistory[] @relation("UserToTryoutHistory")
+}
+
+model PaketSoal {
+  id            String          @id @default(uuid())
+  judul         String
+  deskripsi     String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  soal          Soal[]          @relation("PaketKeSoal")
+  tryoutHistory TryoutHistory[] @relation("PaketSoalToTryoutHistory")
+}
+
+model TryoutHistory {
+  id          String    @id @default(uuid())
+  userId      String
+  paketSoalId String
+  score       Int
+  timeSpent   Int // dalam detik
+  answers     Json // menyimpan jawaban user
+  createdAt   DateTime  @default(now())
+  user        User      @relation("UserToTryoutHistory", fields: [userId], references: [id])
+  paketSoal   PaketSoal @relation("PaketSoalToTryoutHistory", fields: [paketSoalId], references: [id])
+
+  @@index([userId])
+  @@index([paketSoalId])
+}
+
+model Soal {
+  id           String    @id @default(uuid())
+  pertanyaan   String
+  opsiA        String
+  opsiB        String
+  opsiC        String
+  opsiD        String
+  opsiE        String
+  jawabanBenar String
+  pembahasan   String?
+  paketSoalId  String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  paketSoal    PaketSoal @relation("PaketKeSoal", fields: [paketSoalId], references: [id])
+}
+
+model Materi {
+  id        String      @id @default(uuid())
+  nama      String
+  deskripsi String?
+  jenis     JenisMateri
+  link      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Grade {
+  FREE
+  PREMIUM
+  PRO
+}
+
+enum JenisMateri {
+  VIDEO
+  DOKUMEN
+}
