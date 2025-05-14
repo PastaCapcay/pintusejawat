@@ -15,8 +15,9 @@ model User {
   role          Role          @default(USER)
   grade         Grade         @default(FREE)
   createdAt     DateTime      @default(now())
+  activeSessionId String?     @unique  // untuk menyimpan session aktif
+  lastLoginAt    DateTime?    // untuk tracking waktu login terakhir
   tryoutHistory TryoutHistory[] @relation("UserToTryoutHistory")
-  payments      Payment[]
 }
 
 model PaketSoal {

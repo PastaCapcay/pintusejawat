@@ -29,8 +29,18 @@ export function LogoutButton({ variant = 'default' }: LogoutButtonProps) {
     dropdown: 'w-full justify-start text-red-600'
   };
 
-  const handleSignOut = () => {
-    signOut(() => router.push('/auth/sign-in'));
+  const handleSignOut = async () => {
+    try {
+      // Hapus session di Clerk
+      await signOut();
+      // Hapus cookie session
+      document.cookie =
+        '__session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      // Redirect ke halaman login
+      router.push('/auth/sign-in');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   return (
