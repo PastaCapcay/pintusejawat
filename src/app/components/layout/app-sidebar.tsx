@@ -51,7 +51,7 @@ interface NavigationItem {
 export default function AppSidebar({
   userGrade
 }: {
-  userGrade: 'FREE' | 'STARTER' | 'PRO' | 'PRO_PLUS';
+  userGrade?: 'FREE' | 'STARTER' | 'PRO' | 'PRO_PLUS';
 }) {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
@@ -60,6 +60,38 @@ export default function AppSidebar({
 
   // Filter menu berdasarkan grade
   const getFilteredMenu = (): NavigationItem[] => {
+    // Menu untuk dashboard admin (tanpa grade)
+    if (!userGrade) {
+      return [
+        {
+          title: 'Dashboard Overview',
+          href: '/dashboard',
+          icon: LayoutDashboard,
+          color: 'text-sky-500'
+        },
+        {
+          title: 'Account',
+          href: '/dashboard/profile',
+          icon: UserCircle,
+          color: 'text-gray-500',
+          isActive: true,
+          items: [
+            {
+              title: 'Profile',
+              href: '/dashboard/profile',
+              icon: UserCircle
+            },
+            {
+              title: 'Logout',
+              href: '/auth/sign-in',
+              icon: LogOut
+            }
+          ]
+        }
+      ];
+    }
+
+    // Menu untuk user dashboard (dengan grade)
     const baseMenu = [
       {
         title: 'Dashboard Overview',
