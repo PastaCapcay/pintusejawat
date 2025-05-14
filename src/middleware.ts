@@ -11,7 +11,7 @@ export default authMiddleware({
   ],
   ignoredRoutes: ['/api/webhooks(.*)'],
   async afterAuth(auth, req) {
-    // Skip pengecekan untuk public routes
+    // Skip pengecekan untuk public routes dan webhooks
     if (!auth.userId || req.url.includes('/api/webhooks')) {
       return;
     }
@@ -30,12 +30,12 @@ export default authMiddleware({
           }
         );
 
-        // Force logout dengan redirect
-        const response = NextResponse.redirect(
-          new URL('/auth/sign-in', req.url)
-        );
-        response.cookies.set('current_session', '', {
-          expires: new Date(0),
+        // Update cookie dengan session baru alih-alih redirect
+        const response = NextResponse.next();
+        response.cookies.set('current_session', auth.sessionId, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
           path: '/'
         });
         return response;

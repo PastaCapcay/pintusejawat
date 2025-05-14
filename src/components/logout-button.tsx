@@ -14,7 +14,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import { useRouter } from 'next/navigation';
 
 interface LogoutButtonProps {
   variant?: 'default' | 'sidebar' | 'dropdown';
@@ -22,7 +21,6 @@ interface LogoutButtonProps {
 
 export function LogoutButton({ variant = 'default' }: LogoutButtonProps) {
   const { signOut } = useClerk();
-  const router = useRouter();
   const buttonStyles = {
     default: 'w-full justify-start px-2 py-1.5',
     sidebar: 'w-full justify-start px-2 py-1.5',
@@ -31,15 +29,18 @@ export function LogoutButton({ variant = 'default' }: LogoutButtonProps) {
 
   const handleSignOut = async () => {
     try {
-      // Hapus session di Clerk
-      await signOut();
       // Hapus cookie session
       document.cookie =
         '__session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-      // Redirect ke halaman login
-      router.push('/auth/sign-in');
+
+      // Sign out dari Clerk dengan redirect ke landing page
+      await signOut(() => {
+        window.location.href = '/';
+      });
     } catch (error) {
       console.error('Error signing out:', error);
+      // Jika terjadi error, tetap arahkan ke landing page
+      window.location.href = '/';
     }
   };
 
@@ -55,7 +56,7 @@ export function LogoutButton({ variant = 'default' }: LogoutButtonProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>Apakah Anda yakin ingin keluar?</AlertDialogTitle>
           <AlertDialogDescription>
-            Anda akan diarahkan ke halaman login setelah keluar.
+            Anda akan diarahkan ke halaman utama setelah keluar.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
