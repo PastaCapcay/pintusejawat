@@ -2,40 +2,34 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
-import path from 'path';
+import { getVercelOidcToken } from '@vercel/functions/oidc';
+import { OAuth2Client } from 'google-auth-library';
 
-// Fungsi untuk mendapatkan credentials
-function getServiceAccount() {
-  if (process.env.NODE_ENV === 'production') {
-    // Di production (Vercel), gunakan environment variable
-    if (!process.env.GOOGLE_SERVICE_ACCOUNT) {
-      throw new Error('Missing GOOGLE_SERVICE_ACCOUNT environment variable');
-    }
-    return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
-  } else {
-    // Di development, gunakan file
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      return require('../../../../../service-account.json');
-    } catch (error) {
-      console.error('Error loading service-account.json:', error);
-      throw new Error('Failed to load service-account.json');
-    }
-  }
-}
+const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID;
+const GCP_PROJECT_NUMBER = process.env.GCP_PROJECT_NUMBER;
+const GCP_SERVICE_ACCOUNT_EMAIL = process.env.GCP_SERVICE_ACCOUNT_EMAIL;
+const GCP_WORKLOAD_IDENTITY_POOL_ID = process.env.GCP_WORKLOAD_IDENTITY_POOL_ID;
+const GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID =
+  process.env.GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID;
 
-// Inisialisasi Google Drive API
+// Inisialisasi Google Drive API dengan OIDC
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 const FOLDER_ID = '1uPLkQK87kznpM5Cm1980WtuuzD6XUh_2';
 
-const serviceAccount = getServiceAccount();
-const auth2Client = new google.auth.JWT({
-  email: serviceAccount.client_email,
-  key: serviceAccount.private_key,
-  scopes: SCOPES
-});
+// Inisialisasi auth client dengan OIDC
+const authClient = new OAuth2Client();
+authClient.getAccessToken = async () => {
+  const token = await getVercelOidcToken();
+  return {
+    token: token,
+    res: null
+  };
+};
 
-const drive = google.drive({ version: 'v3', auth: auth2Client });
+const drive = google.drive({
+  version: 'v3',
+  auth: authClient
+});
 
 // Fungsi untuk mengirim pesan WhatsApp
 async function sendWhatsAppNotification(data: {
@@ -56,6 +50,21 @@ export async function POST(request: Request) {
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Validasi environment variables
+    if (
+      !GCP_PROJECT_ID ||
+      !GCP_PROJECT_NUMBER ||
+      !GCP_SERVICE_ACCOUNT_EMAIL ||
+      !GCP_WORKLOAD_IDENTITY_POOL_ID ||
+      !GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID
+    ) {
+      console.error('Missing required GCP environment variables');
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
     }
 
     const formData = await request.formData();
