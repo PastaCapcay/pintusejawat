@@ -58,7 +58,7 @@ model Soal {
   paketSoalId  String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  paketSoal    PaketSoal @relation("PaketKeSoal", fields: [paketSoalId], references: [id])
+  paketSoal    PaketSoal @relation("PaketKeSoal", fields: [paketSoalId], references: [id], onDelete: Cascade)
 }
 
 model Materi {
