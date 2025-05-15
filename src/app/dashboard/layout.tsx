@@ -1,5 +1,5 @@
 import AdminKBar from '@/components/kbar/admin';
-import AppSidebar from '@/components/layout/app-sidebar';
+import AdminSidebar from '@/components/layout/admin-sidebar';
 import Header from '@/components/layout/header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import type { Metadata } from 'next';
@@ -21,7 +21,7 @@ export default async function DashboardLayout({
   return (
     <AdminKBar>
       <SidebarProvider defaultOpen={defaultOpen}>
-        <AppSidebar />
+        <AdminSidebar />
         <SidebarInset>
           <Header />
           {/* page main content */}

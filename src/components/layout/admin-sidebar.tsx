@@ -1,99 +1,119 @@
 'use client';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '@/components/ui/collapsible';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+
+import { usePathname, useRouter } from 'next/navigation';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarRail
+  SidebarMenuSubButton,
+  SidebarFooter
 } from '@/components/ui/sidebar';
-import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { getNavItemsByGrade } from '@/constants/data';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { useUser } from '@clerk/nextjs';
 import {
-  IconBell,
-  IconChevronRight,
-  IconChevronsDown,
-  IconCreditCard,
-  IconLogout,
-  IconPhotoUp,
-  IconUserCircle
-} from '@tabler/icons-react';
-import { SignOutButton } from '@clerk/nextjs';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import * as React from 'react';
-import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent
+} from '@/components/ui/collapsible';
+import { IconChevronRight } from '@tabler/icons-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  UserCircle,
+  LogOut,
+  PencilRuler,
+  BookOpen,
+  LayoutDashboard,
+  Building2
+} from 'lucide-react';
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
+  AlertDialogTrigger,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction
 } from '@/components/ui/alert-dialog';
-import { useEffect, useState } from 'react';
-import { LogoutButton } from '@/components/logout-button';
-import { LucideIcon } from 'lucide-react';
-import { Grade } from '@prisma/client';
-import { Building2, LogOut } from 'lucide-react';
+import { SignOutButton } from '@clerk/nextjs';
+
+interface NavigationItem {
+  title: string;
+  href: string;
+  icon: LucideIcon;
+  color?: string;
+  isActive?: boolean;
+  items?: {
+    title: string;
+    href: string;
+    icon: LucideIcon;
+    shortcut?: string[];
+  }[];
+}
 
 export const company = {
   name: 'Pintu Sejawat',
   logo: Building2,
-  plan: 'User Dashboard'
+  plan: 'Admin Dashboard'
 };
 
-const tenants = [{ id: '1', name: 'My Company' }];
-
-interface AppSidebarProps {
-  userGrade: Grade;
-}
-
-export default function AppSidebar({ userGrade }: AppSidebarProps) {
+export default function AdminSidebar() {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
-  const { user } = useUser();
   const router = useRouter();
 
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
-  };
-
-  const activeTenant = tenants[0];
-
-  React.useEffect(() => {
-    // Side effects based on sidebar state changes
-  }, [isOpen]);
-
-  // Get navigation items based on user grade
-  const navigationItems = getNavItemsByGrade(userGrade);
+  const navigationItems: NavigationItem[] = [
+    {
+      title: 'Dashboard Overview',
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      color: 'text-sky-500'
+    },
+    {
+      title: 'Manajemen User',
+      href: '/dashboard/user',
+      icon: UserCircle,
+      color: 'text-violet-500'
+    },
+    {
+      title: 'Manajemen Materi',
+      href: '/dashboard/materi',
+      icon: BookOpen,
+      color: 'text-orange-500'
+    },
+    {
+      title: 'Manajemen Soal',
+      href: '/dashboard/soal',
+      icon: PencilRuler,
+      color: 'text-emerald-500'
+    },
+    {
+      title: 'Account',
+      href: '/dashboard/profile',
+      icon: UserCircle,
+      color: 'text-gray-500',
+      isActive: pathname.startsWith('/dashboard/profile'),
+      items: [
+        {
+          title: 'Profile',
+          href: '/dashboard/profile',
+          icon: UserCircle
+        },
+        {
+          title: 'Logout',
+          href: '/auth/sign-in',
+          icon: LogOut
+        }
+      ]
+    }
+  ];
 
   const LogoutButton = () => (
     <AlertDialog>
@@ -250,7 +270,6 @@ export default function AppSidebar({ userGrade }: AppSidebarProps) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

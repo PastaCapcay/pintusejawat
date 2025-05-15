@@ -1,24 +1,30 @@
-import { auth } from '@clerk/nextjs/server';
-import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const { userId } = await auth();
+    const { userId } = auth();
 
     if (!userId) {
-      return NextResponse.json({ role: null });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Cek role user dari Prisma
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
       select: { role: true }
     });
 
-    return NextResponse.json({ role: user?.role || null });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ role: user.role });
   } catch (error) {
-    console.error('Error fetching user role:', error);
-    return NextResponse.json({ role: null }, { status: 500 });
+    console.error('Error getting user role:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

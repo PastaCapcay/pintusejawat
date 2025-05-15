@@ -196,10 +196,7 @@ export default function AppSidebar({
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        tooltip={item.title}
-                        isActive={pathname === item.href}
-                      >
+                      <SidebarMenuButton isActive={pathname === item.href}>
                         {Icon && <Icon className='size-4' />}
                         <span>{item.title}</span>
                         <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
@@ -212,7 +209,6 @@ export default function AppSidebar({
                           return (
                             <SidebarMenuSubItem key={subItem.title}>
                               <SidebarMenuSubButton
-                                tooltip={subItem.title}
                                 isActive={pathname === subItem.href}
                                 onClick={() => router.push(subItem.href)}
                               >
@@ -229,7 +225,6 @@ export default function AppSidebar({
               ) : (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    tooltip={item.title}
                     isActive={pathname === item.href}
                     onClick={() => router.push(item.href)}
                   >

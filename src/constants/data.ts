@@ -223,7 +223,7 @@ export const getNavItemsByGrade = (grade: Grade): NavigationItem[] => {
 
   // Menu Tryout Gratis untuk semua grade
   const tryoutFreeMenu: NavigationItem = {
-    title: 'Tryout Gratis',
+    title: 'Tryout UKAI Gratis',
     href: '/dashboarduser/tryoutfree',
     icon: Trophy,
     color: 'text-yellow-500'
@@ -231,7 +231,7 @@ export const getNavItemsByGrade = (grade: Grade): NavigationItem[] => {
 
   // Menu Tryout dengan submenu untuk STARTER, PRO, dan PRO_PLUS
   const tryoutMenu: NavigationItem = {
-    title: 'Tryout',
+    title: 'Tryout UKAI',
     href: '/dashboarduser/tryout',
     icon: GraduationCap,
     color: 'text-violet-500',
@@ -251,7 +251,7 @@ export const getNavItemsByGrade = (grade: Grade): NavigationItem[] => {
 
   // Menu Latihan Soal untuk PRO dan PRO_PLUS
   const latsolMenu: NavigationItem = {
-    title: 'Latihan Soal',
+    title: 'Bank Soal UKAI',
     href: '/dashboarduser/latsoal',
     icon: PencilRuler,
     color: 'text-emerald-500'
@@ -259,7 +259,7 @@ export const getNavItemsByGrade = (grade: Grade): NavigationItem[] => {
 
   // Menu Materi untuk PRO dan PRO_PLUS
   const materiMenu: NavigationItem = {
-    title: 'Materi',
+    title: 'Materi UKAI',
     href: '/dashboarduser/materi',
     icon: BookOpen,
     color: 'text-orange-500'

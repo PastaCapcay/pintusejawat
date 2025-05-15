@@ -400,7 +400,7 @@ function SidebarGroupLabel({
   const Comp = asChild ? Slot : 'div';
 
   return (
-    <Comp
+    <div
       data-slot='sidebar-group-label'
       data-sidebar='group-label'
       className={cn(
@@ -421,12 +421,11 @@ function SidebarGroupAction({
   const Comp = asChild ? Slot : 'button';
 
   return (
-    <Comp
+    <button
       data-slot='sidebar-group-action'
       data-sidebar='group-action'
       className={cn(
         'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
-        // Increases the hit area of the button on mobile.
         'after:absolute after:-inset-2 md:after:hidden',
         'group-data-[collapsible=icon]:hidden',
         className
@@ -494,6 +493,21 @@ const sidebarMenuButtonVariants = cva(
   }
 );
 
+interface SidebarMenuButtonProps extends React.ComponentProps<'button'> {
+  isActive?: boolean;
+  tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+  asChild?: boolean;
+  variant?: VariantProps<typeof sidebarMenuButtonVariants>['variant'];
+  size?: VariantProps<typeof sidebarMenuButtonVariants>['size'];
+}
+
+interface SidebarMenuSubButtonProps extends React.ComponentProps<'button'> {
+  isActive?: boolean;
+  tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+  asChild?: boolean;
+  size?: 'sm' | 'md';
+}
+
 function SidebarMenuButton({
   asChild = false,
   isActive = false,
@@ -502,16 +516,12 @@ function SidebarMenuButton({
   tooltip,
   className,
   ...props
-}: React.ComponentProps<'button'> & {
-  asChild?: boolean;
-  isActive?: boolean;
-  tooltip?: string | React.ComponentProps<typeof TooltipContent>;
-} & VariantProps<typeof sidebarMenuButtonVariants>) {
+}: SidebarMenuButtonProps) {
   const Comp = asChild ? Slot : 'button';
   const { isMobile, state } = useSidebar();
 
   const button = (
-    <Comp
+    <button
       data-slot='sidebar-menu-button'
       data-sidebar='menu-button'
       data-size={size}
@@ -525,11 +535,8 @@ function SidebarMenuButton({
     return button;
   }
 
-  if (typeof tooltip === 'string') {
-    tooltip = {
-      children: tooltip
-    };
-  }
+  const tooltipContent =
+    typeof tooltip === 'string' ? { children: tooltip } : tooltip;
 
   return (
     <Tooltip>
@@ -538,7 +545,7 @@ function SidebarMenuButton({
         side='right'
         align='center'
         hidden={state !== 'collapsed' || isMobile}
-        {...tooltip}
+        {...tooltipContent}
       />
     </Tooltip>
   );
@@ -553,15 +560,12 @@ function SidebarMenuAction({
   asChild?: boolean;
   showOnHover?: boolean;
 }) {
-  const Comp = asChild ? Slot : 'button';
-
   return (
-    <Comp
+    <button
       data-slot='sidebar-menu-action'
       data-sidebar='menu-action'
       className={cn(
         'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
-        // Increases the hit area of the button on mobile.
         'after:absolute after:-inset-2 md:after:hidden',
         'peer-data-[size=sm]/menu-button:top-1',
         'peer-data-[size=default]/menu-button:top-1.5',
@@ -669,17 +673,12 @@ function SidebarMenuSubButton({
   asChild = false,
   size = 'md',
   isActive = false,
+  tooltip,
   className,
   ...props
-}: React.ComponentProps<'a'> & {
-  asChild?: boolean;
-  size?: 'sm' | 'md';
-  isActive?: boolean;
-}) {
-  const Comp = asChild ? Slot : 'a';
-
-  return (
-    <Comp
+}: SidebarMenuSubButtonProps) {
+  const button = (
+    <button
       data-slot='sidebar-menu-sub-button'
       data-sidebar='menu-sub-button'
       data-size={size}
@@ -694,6 +693,25 @@ function SidebarMenuSubButton({
       )}
       {...props}
     />
+  );
+
+  if (!tooltip) {
+    return button;
+  }
+
+  const tooltipContent =
+    typeof tooltip === 'string' ? { children: tooltip } : tooltip;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent
+        side='right'
+        align='center'
+        hidden={isActive === false}
+        {...tooltipContent}
+      />
+    </Tooltip>
   );
 }
 
