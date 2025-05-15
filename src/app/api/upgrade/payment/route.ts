@@ -3,12 +3,32 @@ import { auth } from '@clerk/nextjs';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import path from 'path';
-import serviceAccount from '../../../service-account.json';
+
+// Fungsi untuk mendapatkan credentials
+function getServiceAccount() {
+  if (process.env.NODE_ENV === 'production') {
+    // Di production (Vercel), gunakan environment variable
+    if (!process.env.GOOGLE_SERVICE_ACCOUNT) {
+      throw new Error('Missing GOOGLE_SERVICE_ACCOUNT environment variable');
+    }
+    return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+  } else {
+    // Di development, gunakan file
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      return require('../../../../../service-account.json');
+    } catch (error) {
+      console.error('Error loading service-account.json:', error);
+      throw new Error('Failed to load service-account.json');
+    }
+  }
+}
 
 // Inisialisasi Google Drive API
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
-const FOLDER_ID = '1uPLkQK87kznpM5Cm1980WtuuzD6XUh_2'; // Ganti dengan ID folder Google Drive
+const FOLDER_ID = '1uPLkQK87kznpM5Cm1980WtuuzD6XUh_2';
 
+const serviceAccount = getServiceAccount();
 const auth2Client = new google.auth.JWT({
   email: serviceAccount.client_email,
   key: serviceAccount.private_key,
@@ -24,10 +44,9 @@ async function sendWhatsAppNotification(data: {
   packageId: string;
   proofUrl: string;
 }) {
-  const waNumber = '62895391166633'; // Nomor WA admin (sudah dalam format 62)
+  const waNumber = '62895391166633';
   const message = `*Notifikasi Pembayaran Upgrade Paket*\n\nEmail: ${data.email}\nNo WA: ${data.whatsapp}\nPaket: ${data.packageId}\nBukti Pembayaran: ${data.proofUrl}`;
 
-  // Format URL untuk web.whatsapp.com (akan diubah ke whatsapp:// di client untuk mobile)
   const waUrl = `https://web.whatsapp.com/send?phone=${waNumber}&text=${encodeURIComponent(message)}`;
   return waUrl;
 }

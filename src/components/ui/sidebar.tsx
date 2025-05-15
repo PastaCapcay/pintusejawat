@@ -495,61 +495,137 @@ const sidebarMenuButtonVariants = cva(
 
 interface SidebarMenuButtonProps extends React.ComponentProps<'button'> {
   isActive?: boolean;
-  tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+  tooltip?: string | React.ReactNode;
   asChild?: boolean;
   variant?: VariantProps<typeof sidebarMenuButtonVariants>['variant'];
   size?: VariantProps<typeof sidebarMenuButtonVariants>['size'];
 }
 
-interface SidebarMenuSubButtonProps extends React.ComponentProps<'button'> {
+type SidebarMenuSubButtonProps = {
   isActive?: boolean;
-  tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+  tooltip?: string | React.ReactNode;
   asChild?: boolean;
   size?: 'sm' | 'md';
-}
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-function SidebarMenuButton({
-  asChild = false,
-  isActive = false,
-  variant = 'default',
-  size = 'default',
-  tooltip,
-  className,
-  ...props
-}: SidebarMenuButtonProps) {
-  const Comp = asChild ? Slot : 'button';
-  const { isMobile, state } = useSidebar();
-
-  const button = (
-    <button
-      data-slot='sidebar-menu-button'
-      data-sidebar='menu-button'
-      data-size={size}
-      data-active={isActive}
-      className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+const SidebarMenuSub = React.forwardRef<
+  HTMLUListElement,
+  React.ComponentProps<'ul'>
+>(({ className, ...props }, ref) => {
+  return (
+    <ul
+      ref={ref}
+      data-slot='sidebar-menu-sub'
+      data-sidebar='menu-sub'
+      className={cn(
+        'border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5',
+        'group-data-[collapsible=icon]:hidden',
+        className
+      )}
       {...props}
     />
   );
+});
+SidebarMenuSub.displayName = 'SidebarMenuSub';
 
-  if (!tooltip) {
-    return button;
-  }
-
-  const tooltipContent =
-    typeof tooltip === 'string' ? { children: tooltip } : tooltip;
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        side='right'
-        align='center'
-        hidden={state !== 'collapsed' || isMobile}
-        {...tooltipContent}
+const SidebarMenuSubButton = React.forwardRef<
+  HTMLButtonElement,
+  SidebarMenuSubButtonProps
+>(
+  (
+    { className, isActive, tooltip, asChild = false, size = 'md', ...props },
+    ref
+  ) => {
+    const buttonContent = (
+      <button
+        ref={ref as React.Ref<HTMLButtonElement>}
+        type='button'
+        data-slot='sidebar-menu-sub-button'
+        data-sidebar='menu-sub-button'
+        data-size={size}
+        className={cn(
+          'group/menu-sub-button ring-offset-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+          size === 'sm' && 'gap-1.5 py-1 text-xs',
+          isActive && 'bg-accent/50 text-accent-foreground hover:bg-accent/50',
+          className
+        )}
+        {...props}
       />
-    </Tooltip>
-  );
-}
+    );
+
+    const finalButton = asChild ? (
+      <Slot ref={ref as React.Ref<HTMLElement>}>{buttonContent}</Slot>
+    ) : (
+      buttonContent
+    );
+
+    if (tooltip) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>{finalButton}</TooltipTrigger>
+          <TooltipContent>{tooltip}</TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return finalButton;
+  }
+);
+
+SidebarMenuSubButton.displayName = 'SidebarMenuSubButton';
+
+const SidebarMenuButton = React.forwardRef<
+  HTMLButtonElement | HTMLElement,
+  SidebarMenuButtonProps
+>(
+  (
+    {
+      asChild = false,
+      isActive = false,
+      variant = 'default',
+      size = 'default',
+      tooltip,
+      className,
+      ...props
+    },
+    forwardedRef
+  ) => {
+    const Comp = asChild ? Slot : 'button';
+    const { isMobile, state } = useSidebar();
+
+    const button = (
+      <Comp
+        ref={forwardedRef as any}
+        data-slot='sidebar-menu-button'
+        data-sidebar='menu-button'
+        data-size={size}
+        data-active={isActive}
+        className={cn(
+          sidebarMenuButtonVariants({ variant, size }),
+          isActive && 'bg-sidebar-button text-sidebar-button-foreground',
+          className
+        )}
+        {...props}
+      />
+    );
+
+    if (!tooltip) return button;
+
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent
+          side='right'
+          align='center'
+          hidden={state !== 'collapsed' || isMobile}
+        >
+          {tooltip}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+);
+SidebarMenuButton.displayName = 'SidebarMenuButton';
 
 function SidebarMenuAction({
   className,
@@ -640,21 +716,6 @@ function SidebarMenuSkeleton({
   );
 }
 
-function SidebarMenuSub({ className, ...props }: React.ComponentProps<'ul'>) {
-  return (
-    <ul
-      data-slot='sidebar-menu-sub'
-      data-sidebar='menu-sub'
-      className={cn(
-        'border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5',
-        'group-data-[collapsible=icon]:hidden',
-        className
-      )}
-      {...props}
-    />
-  );
-}
-
 function SidebarMenuSubItem({
   className,
   ...props
@@ -666,52 +727,6 @@ function SidebarMenuSubItem({
       className={cn('group/menu-sub-item relative', className)}
       {...props}
     />
-  );
-}
-
-function SidebarMenuSubButton({
-  asChild = false,
-  size = 'md',
-  isActive = false,
-  tooltip,
-  className,
-  ...props
-}: SidebarMenuSubButtonProps) {
-  const button = (
-    <button
-      data-slot='sidebar-menu-sub-button'
-      data-sidebar='menu-sub-button'
-      data-size={size}
-      data-active={isActive}
-      className={cn(
-        'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground [&>svg]:text-sidebar-accent-foreground flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
-        'data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground',
-        size === 'sm' && 'text-xs',
-        size === 'md' && 'text-sm',
-        'group-data-[collapsible=icon]:hidden',
-        className
-      )}
-      {...props}
-    />
-  );
-
-  if (!tooltip) {
-    return button;
-  }
-
-  const tooltipContent =
-    typeof tooltip === 'string' ? { children: tooltip } : tooltip;
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        side='right'
-        align='center'
-        hidden={isActive === false}
-        {...tooltipContent}
-      />
-    </Tooltip>
   );
 }
 

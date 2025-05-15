@@ -611,7 +611,7 @@ export default function Home() {
               <h4 className='mb-4 font-semibold'>Kontak</h4>
               <ul className='space-y-2 text-slate-400'>
                 <li>Email: info@pintusejawat.com</li>
-                <li>WhatsApp: +62 812-3456-7890</li>
+                <li>WhatsApp: +62 858-4280-0018</li>
                 <li>Instagram: @pintusejawat</li>
               </ul>
             </div>

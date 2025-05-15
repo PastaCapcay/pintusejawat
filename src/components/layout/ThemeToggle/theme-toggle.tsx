@@ -1,46 +1,38 @@
 'use client';
 
-import { IconBrightness } from '@tabler/icons-react';
 import { useTheme } from 'next-themes';
-import * as React from 'react';
 import { Button } from '@/components/ui/button';
+import { Moon, Sun } from 'lucide-react';
 
-export function ModeToggle() {
-  const { setTheme, resolvedTheme } = useTheme();
+// Add type declaration for startViewTransition
+interface ViewTransition {
+  startViewTransition: (callback: () => void) => void;
+}
 
-  const handleThemeToggle = React.useCallback(
-    (e?: React.MouseEvent) => {
-      const newMode = resolvedTheme === 'dark' ? 'light' : 'dark';
-      const root = document.documentElement;
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
 
-      const startViewTransition = (document as any).startViewTransition;
-      if (!startViewTransition) {
-        setTheme(newMode);
-        return;
-      }
+  const toggleTheme = () => {
+    const newMode = theme === 'light' ? 'dark' : 'light';
 
-      // Set coordinates from the click event
-      if (e) {
-        root.style.setProperty('--x', `${e.clientX}px`);
-        root.style.setProperty('--y', `${e.clientY}px`);
-      }
-
-      startViewTransition(() => {
+    // Type cast document to include startViewTransition
+    if ((document as unknown as ViewTransition).startViewTransition) {
+      (document as unknown as ViewTransition).startViewTransition(() => {
         setTheme(newMode);
       });
-    },
-    [resolvedTheme, setTheme]
-  );
+    } else {
+      setTheme(newMode);
+    }
+  };
 
   return (
-    <Button
-      variant='secondary'
-      size='icon'
-      className='group/toggle size-8'
-      onClick={handleThemeToggle}
-    >
-      <IconBrightness />
+    <Button variant='ghost' size='icon' onClick={toggleTheme}>
+      <Sun className='h-[1.5rem] w-[1.3rem] dark:hidden' />
+      <Moon className='hidden h-5 w-5 dark:block' />
       <span className='sr-only'>Toggle theme</span>
     </Button>
   );
 }
+
+// Export ModeToggle as an alias for backward compatibility
+export const ModeToggle = ThemeToggle;
