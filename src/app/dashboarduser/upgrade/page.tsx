@@ -64,9 +64,9 @@ export default function UpgradePage() {
                 >
                   <pkg.icon className={`h-6 w-6 ${pkg.color}`} />
                 </div>
-                <CardTitle className='flex items-baseline gap-2'>
-                  {pkg.name}
-                  <span className='text-primary text-2xl font-bold'>
+                <CardTitle className='flex flex-col gap-2'>
+                  <span className='text-xl'>{pkg.name}</span>
+                  <span className='text-primary text-3xl font-bold'>
                     Rp {pkg.price}K
                   </span>
                 </CardTitle>

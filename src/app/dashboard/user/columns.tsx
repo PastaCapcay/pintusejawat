@@ -54,9 +54,9 @@ export const columns: ColumnDef<UserColumn, any>[] = [
       return (
         <Badge
           variant={
-            grade === Grade.PRO
+            grade === Grade.PRO_PLUS
               ? 'destructive'
-              : grade === Grade.PREMIUM
+              : grade === Grade.PRO
                 ? 'default'
                 : 'secondary'
           }

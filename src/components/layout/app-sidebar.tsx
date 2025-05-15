@@ -46,7 +46,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -70,8 +69,6 @@ export const company = {
   plan: 'User Dashboard'
 };
 
-const tenants = [{ id: '1', name: 'My Company' }];
-
 interface AppSidebarProps {
   userGrade: Grade;
 }
@@ -81,12 +78,6 @@ export default function AppSidebar({ userGrade }: AppSidebarProps) {
   const { isOpen } = useMediaQuery();
   const { user } = useUser();
   const router = useRouter();
-
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
-  };
-
-  const activeTenant = tenants[0];
 
   React.useEffect(() => {
     // Side effects based on sidebar state changes
@@ -250,7 +241,6 @@ export default function AppSidebar({ userGrade }: AppSidebarProps) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

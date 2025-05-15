@@ -29,10 +29,9 @@ import {
   GraduationCap,
   History,
   PencilRuler,
-  BookOpen
+  BookOpen,
+  LayoutDashboard
 } from 'lucide-react';
-import { OrgSwitcher } from '@/components/org-switcher';
-import { LayoutDashboard } from 'lucide-react';
 
 interface NavigationItem {
   title: string;

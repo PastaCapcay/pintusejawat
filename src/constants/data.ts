@@ -27,19 +27,9 @@ interface NavigationItem {
   icon: LucideIcon;
   color?: string;
   isActive?: boolean;
+  shortcut?: string[];
   items?: NavigationSubItem[];
 }
-
-export type Product = {
-  photo_url: string;
-  name: string;
-  description: string;
-  created_at: string;
-  price: number;
-  id: number;
-  category: string;
-  updated_at: string;
-};
 
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavigationItem[] = [

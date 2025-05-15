@@ -3,7 +3,6 @@
 import { IconBrightness } from '@tabler/icons-react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
-
 import { Button } from '@/components/ui/button';
 
 export function ModeToggle() {
@@ -14,7 +13,8 @@ export function ModeToggle() {
       const newMode = resolvedTheme === 'dark' ? 'light' : 'dark';
       const root = document.documentElement;
 
-      if (!document.startViewTransition) {
+      const startViewTransition = (document as any).startViewTransition;
+      if (!startViewTransition) {
         setTheme(newMode);
         return;
       }
@@ -25,7 +25,7 @@ export function ModeToggle() {
         root.style.setProperty('--y', `${e.clientY}px`);
       }
 
-      document.startViewTransition(() => {
+      startViewTransition(() => {
         setTheme(newMode);
       });
     },
