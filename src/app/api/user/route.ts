@@ -1,26 +1,87 @@
-import { NextResponse, NextRequest } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Role } from '@prisma/client';
 
-export async function GET(req: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const body = await request.json();
+    console.log('Received request body:', body);
 
-    if (!clerkUserId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const { id, email, name } = body;
 
-    // Cek apakah user adalah admin
-    const dbUser = await prisma.user.findUnique({
-      where: { clerkId: clerkUserId }
+    // Cek apakah user sudah ada
+    console.log('Checking for existing user with email:', email);
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
     });
 
-    if (!dbUser || dbUser.role !== Role.ADMIN) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    console.log('Existing user:', existingUser);
+
+    if (existingUser) {
+      console.log('User already exists with email:', email);
+      return NextResponse.json(
+        { error: 'Email sudah terdaftar' },
+        { status: 400 }
+      );
     }
 
+    // Buat user baru dengan role dan grade default
+    console.log('Creating new user with data:', {
+      id,
+      email,
+      name,
+      role: 'USER',
+      grade: 'FREE'
+    });
+
+    const user = await prisma.user.create({
+      data: {
+        id,
+        email,
+        name,
+        role: 'USER',
+        grade: 'FREE'
+      }
+    });
+
+    console.log('User created successfully:', user);
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error('Error in POST /api/user:', error);
+    return NextResponse.json({ error: 'Gagal membuat user' }, { status: 500 });
+  }
+}
+
+// Endpoint untuk menghapus user jika signup di Supabase gagal
+export async function DELETE(request: Request) {
+  try {
+    const { id } = await request.json();
+
+    await prisma.user.delete({
+      where: { id }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return NextResponse.json(
+      { error: 'Gagal menghapus user' },
+      { status: 500 }
+    );
+  }
+}
+
+// Endpoint untuk mengambil semua user
+export async function GET() {
+  try {
     const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        grade: true,
+        createdAt: true
+      },
       orderBy: {
         createdAt: 'desc'
       }
@@ -28,7 +89,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(users);
   } catch (error) {
-    console.error('[USER_GET]', error);
-    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+    console.error('Error fetching users:', error);
+    return NextResponse.json(
+      { error: 'Gagal mengambil data user' },
+      { status: 500 }
+    );
   }
 }

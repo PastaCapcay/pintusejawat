@@ -1,29 +1,21 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { Soal } from '@prisma/client';
+import { cookies } from 'next/headers';
 
 const FREE_TRYOUT_QUESTIONS = 10; // Batasi jumlah soal untuk tryout gratis
 const TRYOUT_FREE = 'TRYOUT_FREE'; // ID paket tryout gratis
 
 export async function GET() {
   try {
-    const { userId: clerkUserId } = await auth();
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
 
-    if (!clerkUserId) {
+    if (!user?.id) {
       return new NextResponse('Unauthorized', { status: 401 });
-    }
-
-    // Dapatkan user dari database
-    const user = await prisma.user.findUnique({
-      where: { clerkId: clerkUserId }
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User tidak ditemukan' },
-        { status: 404 }
-      );
     }
 
     // Cek apakah user sudah pernah mengerjakan tryout gratis

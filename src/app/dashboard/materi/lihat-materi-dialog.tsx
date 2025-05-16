@@ -33,12 +33,12 @@ export function LihatMateriDialog({
     if (materi.jenis === JenisMateri.VIDEO) {
       if (isYoutubeVideo) {
         return (
-          <div className='flex h-[calc(80vh-73px)] w-full items-center justify-center bg-black/5'>
-            <div className='mx-auto w-full max-w-[1280px] p-4'>
+          <div className='flex h-[calc(90vh-73px)] w-full items-center justify-center bg-black/5 md:h-[calc(95vh-73px)]'>
+            <div className='mx-auto w-full max-w-[1440px] p-4'>
               <div className='relative w-full pb-[56.25%]'>
                 <iframe
                   src={youtubeSrc}
-                  className='absolute top-0 left-0 h-full w-full rounded-lg'
+                  className='absolute left-0 top-0 h-full w-full rounded-lg'
                   allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                   allowFullScreen
                   referrerPolicy='strict-origin-when-cross-origin'
@@ -49,13 +49,13 @@ export function LihatMateriDialog({
         );
       } else {
         return (
-          <div className='flex h-[calc(80vh-73px)] w-full items-center justify-center bg-black/5'>
-            <div className='mx-auto w-full max-w-[1280px] p-4'>
+          <div className='flex h-[calc(90vh-73px)] w-full items-center justify-center bg-black/5 md:h-[calc(95vh-73px)]'>
+            <div className='mx-auto w-full max-w-[1440px] p-4'>
               <div className='relative w-full pb-[56.25%]'>
                 <video
                   src={materi.link}
                   controls
-                  className='absolute top-0 left-0 h-full w-full rounded-lg'
+                  className='absolute left-0 top-0 h-full w-full rounded-lg'
                 >
                   Browser Anda tidak mendukung pemutaran video.
                 </video>
@@ -68,7 +68,7 @@ export function LihatMateriDialog({
       // Untuk PDF, kita gunakan Google Docs Viewer untuk menampilkan PDF
       const pdfViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(materi.link)}&embedded=true`;
       return (
-        <div className='h-[calc(80vh-73px)] w-full bg-black/5'>
+        <div className='h-[calc(90vh-73px)] w-full bg-black/5 md:h-[calc(95vh-73px)]'>
           <iframe
             src={pdfViewerUrl}
             className='h-full w-full'
@@ -81,13 +81,13 @@ export function LihatMateriDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='min-h-[80vh] w-full max-w-[90vw] gap-0 p-0'>
+      <DialogContent className='min-h-[90vh] w-full max-w-[95vw] gap-0 p-0 md:min-h-[95vh]'>
         <DialogHeader className='border-b px-6 py-4'>
           <DialogTitle className='text-xl font-semibold'>
             {materi.nama}
           </DialogTitle>
         </DialogHeader>
-        <div className='bg-muted/5 flex-1 overflow-hidden'>
+        <div className='flex-1 overflow-hidden bg-muted/5'>
           {renderContent()}
         </div>
       </DialogContent>

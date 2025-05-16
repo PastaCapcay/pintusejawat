@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
   try {
-    const { userId } = await auth();
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
 
-    if (!userId) {
+    if (!user?.id) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
@@ -39,15 +43,20 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
 
-    if (!userId) {
+    if (!user?.id) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
     const body = await request.json();
+    console.log('Data yang diterima di API:', body);
+
     const {
-      paketId,
+      paketSoalId,
       pertanyaan,
       opsiA,
       opsiB,
@@ -59,7 +68,7 @@ export async function POST(request: Request) {
     } = body;
 
     if (
-      !paketId ||
+      !paketSoalId ||
       !pertanyaan ||
       !opsiA ||
       !opsiB ||
@@ -68,6 +77,16 @@ export async function POST(request: Request) {
       !opsiE ||
       !jawabanBenar
     ) {
+      console.error('Validasi gagal:', {
+        paketSoalId,
+        pertanyaan,
+        opsiA,
+        opsiB,
+        opsiC,
+        opsiD,
+        opsiE,
+        jawabanBenar
+      });
       return NextResponse.json(
         { error: 'Semua field wajib diisi kecuali pembahasan' },
         { status: 400 }
@@ -84,7 +103,7 @@ export async function POST(request: Request) {
 
     const soal = await prisma.soal.create({
       data: {
-        paketSoalId: paketId,
+        paketSoalId,
         pertanyaan,
         opsiA,
         opsiB,
@@ -97,7 +116,7 @@ export async function POST(request: Request) {
     });
 
     // Revalidate paths
-    revalidatePath(`/dashboard/soal/${paketId}`);
+    revalidatePath(`/dashboard/soal/${paketSoalId}`);
 
     return NextResponse.json(soal);
   } catch (error) {

@@ -1,10 +1,21 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 const prisma = new PrismaClient();
 
 export async function GET() {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
     const paketSoal = await prisma.paketSoal.findMany({
       where: {
         id: {
@@ -27,6 +38,24 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    // Cek apakah user adalah admin
+    const adminUser = await prisma.user.findUnique({
+      where: { id: user.id }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
     const body = await request.json();
     const { judul, deskripsi } = body;
 

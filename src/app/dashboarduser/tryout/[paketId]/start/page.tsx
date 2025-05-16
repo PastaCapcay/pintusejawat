@@ -44,6 +44,8 @@ export default function TryoutStartPage() {
   const [loading, setLoading] = useState(true);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const [stats, setStats] = useState({
     answered: 0,
     flagged: 0,
@@ -153,12 +155,16 @@ export default function TryoutStartPage() {
   };
 
   const handleFinish = () => {
-    if (!isStarted) return;
+    if (isSubmitting || isFinished) return;
     setShowFinishDialog(true);
   };
 
   const confirmFinish = async () => {
+    if (isSubmitting || isFinished) return;
+
     try {
+      setIsSubmitting(true);
+
       // Hitung jumlah jawaban benar
       const correctAnswers = questions.reduce((acc, question) => {
         return acc + (answers[question.id] === question.jawabanBenar ? 1 : 0);
@@ -172,7 +178,6 @@ export default function TryoutStartPage() {
         answers
       };
 
-      // Simpan ke database
       const response = await fetch('/api/tryout-history', {
         method: 'POST',
         headers: {
@@ -186,6 +191,7 @@ export default function TryoutStartPage() {
       }
 
       const savedResult = await response.json();
+      setIsFinished(true);
 
       // Redirect ke halaman result dengan ID history
       router.push(
@@ -198,6 +204,8 @@ export default function TryoutStartPage() {
         'Terjadi kesalahan saat menyimpan hasil, tapi jawaban Anda sudah tercatat.'
       );
       router.push(`/dashboarduser/tryout/${params.paketId}/result`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -341,7 +349,12 @@ export default function TryoutStartPage() {
               />
               Ragu-ragu
             </Button>
-            <Button onClick={handleFinish}>Selesai</Button>
+            <Button
+              onClick={handleFinish}
+              disabled={isSubmitting || isFinished}
+            >
+              Selesai
+            </Button>
           </div>
           <Button
             variant='outline'
@@ -395,7 +408,10 @@ export default function TryoutStartPage() {
               />
               Ragu-ragu
             </Button>
-            <Button onClick={handleFinish} className='w-full'>
+            <Button
+              onClick={handleFinish}
+              disabled={isSubmitting || isFinished}
+            >
               Selesai
             </Button>
           </div>
@@ -473,10 +489,16 @@ export default function TryoutStartPage() {
             <Button
               variant='outline'
               onClick={() => setShowFinishDialog(false)}
+              disabled={isSubmitting || isFinished}
             >
               Kembali
             </Button>
-            <Button onClick={confirmFinish}>Ya, Selesaikan</Button>
+            <Button
+              onClick={confirmFinish}
+              disabled={isSubmitting || isFinished}
+            >
+              {isSubmitting ? 'Menyimpan...' : 'Ya, Selesaikan'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

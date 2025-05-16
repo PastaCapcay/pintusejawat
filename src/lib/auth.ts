@@ -1,15 +1,19 @@
-import { auth } from '@clerk/nextjs/server';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { prisma } from './prisma';
 
 export async function getUserRole() {
-  const { userId } = await auth();
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
 
-  if (!userId) {
+  if (!user) {
     return null;
   }
 
   const dbUser = await prisma.user.findUnique({
-    where: { clerkId: userId },
+    where: { id: user.id },
     select: { role: true }
   });
 

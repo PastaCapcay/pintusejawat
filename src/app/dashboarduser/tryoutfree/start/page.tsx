@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { TextWithImage } from '@/components/ui/text-with-image';
 import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Question {
   id: string;
@@ -35,6 +36,8 @@ export default function TryoutStartPage() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({
     answered: 0,
@@ -42,6 +45,7 @@ export default function TryoutStartPage() {
     unanswered: 0
   });
   const router = useRouter();
+  const { toast } = useToast();
 
   // Update stats setiap kali ada perubahan pada answers atau flagged
   useEffect(() => {
@@ -147,52 +151,57 @@ export default function TryoutStartPage() {
   };
 
   const handleFinish = () => {
+    if (isSubmitting || isFinished) return;
     setShowFinishDialog(true);
   };
 
-  const confirmFinish = () => {
-    // Hitung jumlah jawaban yang benar
-    const answeredCount = Object.keys(answers).length;
+  const confirmFinish = async () => {
+    if (isSubmitting || isFinished) return;
 
-    // Simpan hasil tryout gratis
-    const saveResult = async () => {
-      try {
-        const resultData = {
-          paketSoalId: 'TRYOUT_FREE',
-          score: answeredCount,
-          timeSpent: questions.length * 60 - timeLeft,
-          answers
-        };
+    try {
+      setIsSubmitting(true);
 
-        const response = await fetch('/api/tryout-history', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(resultData)
-        });
+      // Hitung jumlah jawaban yang benar
+      const answeredCount = Object.keys(answers).length;
 
-        if (!response.ok) {
-          throw new Error('Gagal menyimpan hasil tryout');
-        }
+      // Simpan hasil tryout gratis
+      const resultData = {
+        paketSoalId: 'TRYOUT_FREE',
+        score: answeredCount,
+        timeSpent: questions.length * 60 - timeLeft,
+        answers
+      };
 
-        // Redirect ke halaman result dengan data yang lengkap
-        router.push(
-          `/dashboarduser/tryoutfree/result?score=${answeredCount}&total=${questions.length}`
-        );
-      } catch (error) {
-        console.error('Error saving tryout result:', error);
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description:
-            'Terjadi kesalahan saat menyimpan hasil. Silakan coba lagi.',
-          duration: 5000
-        });
+      const response = await fetch('/api/tryout-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resultData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal menyimpan hasil tryout');
       }
-    };
 
-    saveResult();
+      setIsFinished(true);
+
+      // Redirect ke halaman result dengan data yang lengkap
+      router.push(
+        `/dashboarduser/tryoutfree/result?score=${answeredCount}&total=${questions.length}`
+      );
+    } catch (error) {
+      console.error('Error saving tryout result:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description:
+          'Terjadi kesalahan saat menyimpan hasil. Silakan coba lagi.',
+        duration: 5000
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -200,7 +209,7 @@ export default function TryoutStartPage() {
       <div className='flex h-screen items-center justify-center'>
         <div className='text-center'>
           <div className='text-lg font-medium'>Memuat soal...</div>
-          <div className='text-muted-foreground text-sm'>
+          <div className='text-sm text-muted-foreground'>
             Mohon tunggu sebentar
           </div>
         </div>
@@ -312,7 +321,7 @@ export default function TryoutStartPage() {
       </div>
 
       {/* Navigation Sidebar */}
-      <div className='bg-muted w-64 overflow-y-auto border-l p-4'>
+      <div className='w-64 overflow-y-auto border-l bg-muted p-4'>
         <div className='space-y-4'>
           <h3 className='font-semibold'>Status Pengerjaan</h3>
           <div className='space-y-2 text-sm'>
@@ -341,20 +350,20 @@ export default function TryoutStartPage() {
                     variant='outline'
                     className={`relative ${
                       index === currentQuestionIndex
-                        ? 'ring-primary ring-2'
+                        ? 'ring-2 ring-primary'
                         : ''
                     }`}
                     onClick={() => setCurrentQuestionIndex(index)}
                   >
                     {index + 1}
                     {status === 'answered' && (
-                      <CheckCircle2 className='absolute -top-1 -right-1 h-3 w-3 text-green-500' />
+                      <CheckCircle2 className='absolute -right-1 -top-1 h-3 w-3 text-green-500' />
                     )}
                     {status === 'flagged' && (
-                      <Flag className='absolute -top-1 -right-1 h-3 w-3 text-red-500' />
+                      <Flag className='absolute -right-1 -top-1 h-3 w-3 text-red-500' />
                     )}
                     {status === 'unanswered' && (
-                      <HelpCircle className='absolute -top-1 -right-1 h-3 w-3 text-gray-500' />
+                      <HelpCircle className='absolute -right-1 -top-1 h-3 w-3 text-gray-500' />
                     )}
                   </Button>
                 );
@@ -363,7 +372,12 @@ export default function TryoutStartPage() {
           </div>
 
           <div className='border-t pt-4'>
-            <Button className='w-full' variant='default' onClick={handleFinish}>
+            <Button
+              className='w-full'
+              variant='default'
+              onClick={handleFinish}
+              disabled={isSubmitting || isFinished}
+            >
               Selesai
             </Button>
           </div>
@@ -399,10 +413,16 @@ export default function TryoutStartPage() {
             <Button
               variant='outline'
               onClick={() => setShowFinishDialog(false)}
+              disabled={isSubmitting || isFinished}
             >
               Kembali
             </Button>
-            <Button onClick={confirmFinish}>Ya, Selesaikan</Button>
+            <Button
+              onClick={confirmFinish}
+              disabled={isSubmitting || isFinished}
+            >
+              {isSubmitting ? 'Menyimpan...' : 'Ya, Selesaikan'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

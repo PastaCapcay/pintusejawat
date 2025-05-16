@@ -23,6 +23,7 @@ import { useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { TextWithImage } from '@/components/ui/text-with-image';
 
 interface TambahSoalDialogProps {
   open: boolean;
@@ -41,13 +42,20 @@ export function TambahSoalDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     pertanyaan: '',
+    gambarPertanyaan: '',
     opsiA: '',
+    gambarOpsiA: '',
     opsiB: '',
+    gambarOpsiB: '',
     opsiC: '',
+    gambarOpsiC: '',
     opsiD: '',
+    gambarOpsiD: '',
     opsiE: '',
+    gambarOpsiE: '',
     jawabanBenar: '',
-    pembahasan: ''
+    pembahasan: '',
+    gambarPembahasan: ''
   });
   const [error, setError] = useState('');
 
@@ -122,20 +130,44 @@ export function TambahSoalDialog({
     setIsLoading(true);
     setError('');
 
+    // Format teks dengan gambar
+    const formatTextWithImage = (text: string, imageUrl: string) => {
+      if (!imageUrl) return text;
+      return `${text} (${imageUrl})`;
+    };
+
     try {
+      const formattedData = {
+        pertanyaan: formatTextWithImage(
+          formData.pertanyaan,
+          formData.gambarPertanyaan
+        ),
+        opsiA: formatTextWithImage(formData.opsiA, formData.gambarOpsiA),
+        opsiB: formatTextWithImage(formData.opsiB, formData.gambarOpsiB),
+        opsiC: formatTextWithImage(formData.opsiC, formData.gambarOpsiC),
+        opsiD: formatTextWithImage(formData.opsiD, formData.gambarOpsiD),
+        opsiE: formatTextWithImage(formData.opsiE, formData.gambarOpsiE),
+        jawabanBenar: formData.jawabanBenar,
+        pembahasan: formatTextWithImage(
+          formData.pembahasan,
+          formData.gambarPembahasan
+        ),
+        paketSoalId
+      };
+
+      console.log('Data yang akan dikirim:', formattedData);
+
       const response = await fetch('/api/soal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          ...formData,
-          paketSoalId
-        })
+        body: JSON.stringify(formattedData)
       });
 
       if (!response.ok) {
         const data = await response.json();
+        console.error('Response error:', data);
         throw new Error(data.error || 'Gagal menambahkan soal');
       }
 
@@ -146,13 +178,20 @@ export function TambahSoalDialog({
       // Reset form
       setFormData({
         pertanyaan: '',
+        gambarPertanyaan: '',
         opsiA: '',
+        gambarOpsiA: '',
         opsiB: '',
+        gambarOpsiB: '',
         opsiC: '',
+        gambarOpsiC: '',
         opsiD: '',
+        gambarOpsiD: '',
         opsiE: '',
+        gambarOpsiE: '',
         jawabanBenar: '',
-        pembahasan: ''
+        pembahasan: '',
+        gambarPembahasan: ''
       });
       setErrors({
         pertanyaan: '',
@@ -181,191 +220,265 @@ export function TambahSoalDialog({
   const resetFormData = () => {
     setFormData({
       pertanyaan: '',
+      gambarPertanyaan: '',
       opsiA: '',
+      gambarOpsiA: '',
       opsiB: '',
+      gambarOpsiB: '',
       opsiC: '',
+      gambarOpsiC: '',
       opsiD: '',
+      gambarOpsiD: '',
       opsiE: '',
+      gambarOpsiE: '',
       jawabanBenar: '',
-      pembahasan: ''
+      pembahasan: '',
+      gambarPembahasan: ''
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-[600px]'>
+      <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-[600px]'>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Tambah Soal</DialogTitle>
-            <DialogDescription>
-              Tambahkan soal baru ke dalam paket soal ini.
+            <DialogDescription className='space-y-2'>
+              <p>Tambahkan soal baru ke paket soal ini.</p>
+              <div className='mt-2 text-sm'>
+                <p className='font-semibold'>Panduan Penggunaan Gambar:</p>
+                <ul className='list-disc space-y-1 pl-4'>
+                  <li>
+                    Cara Upload & Share Gambar dari Google Drive:
+                    <ol className='mt-1 list-decimal space-y-1 pl-4'>
+                      <li>Upload gambar ke Google Drive</li>
+                      <li>Klik kanan pada file &gt; Bagikan</li>
+                      <li>
+                        Ubah akses menjadi "Siapa saja yang memiliki link"
+                      </li>
+                      <li>Klik kanan lagi &gt; Dapatkan link</li>
+                      <li>
+                        Salin ID file dari link (bagian setelah /d/ dan sebelum
+                        /view)
+                      </li>
+                      <li>
+                        Gunakan format:
+                        https://drive.google.com/file/d/[PASTE_ID_DISINI]/view
+                      </li>
+                    </ol>
+                  </li>
+                  <li>
+                    Pastikan gambar sudah dishare dengan akses "Siapa saja yang
+                    memiliki link"
+                  </li>
+                  <li>
+                    Untuk Excel, langsung tempelkan link lengkap setelah teks
+                    dengan format kurung
+                  </li>
+                </ul>
+              </div>
             </DialogDescription>
           </DialogHeader>
+
           <div className='grid gap-4 py-4'>
             <div className='grid gap-2'>
-              <Label htmlFor='pertanyaan' className='flex items-center gap-1'>
-                Pertanyaan
-                <span className='text-red-500'>*</span>
+              <Label htmlFor='pertanyaan'>
+                Pertanyaan<span className='text-red-500'>*</span>
               </Label>
               <Textarea
                 id='pertanyaan'
                 value={formData.pertanyaan}
-                onChange={(e) => {
-                  setFormData({ ...formData, pertanyaan: e.target.value });
-                  if (errors.pertanyaan) {
-                    setErrors({ ...errors, pertanyaan: '' });
-                  }
-                }}
+                onChange={(e) =>
+                  setFormData({ ...formData, pertanyaan: e.target.value })
+                }
                 placeholder='Masukkan pertanyaan'
-                className={errors.pertanyaan ? 'border-red-500' : ''}
               />
-              {errors.pertanyaan && (
-                <span className='text-sm text-red-500'>
-                  {errors.pertanyaan}
-                </span>
+              <Input
+                id='gambarPertanyaan'
+                value={formData.gambarPertanyaan}
+                onChange={(e) =>
+                  setFormData({ ...formData, gambarPertanyaan: e.target.value })
+                }
+                placeholder='URL gambar pertanyaan (opsional)'
+              />
+              {formData.gambarPertanyaan && (
+                <TextWithImage
+                  content={`${formData.pertanyaan} (${formData.gambarPertanyaan})`}
+                />
               )}
             </div>
 
+            {/* Opsi A */}
             <div className='grid gap-2'>
-              <Label htmlFor='opsiA' className='flex items-center gap-1'>
+              <Label htmlFor='opsiA'>
                 Opsi A<span className='text-red-500'>*</span>
               </Label>
               <Input
                 id='opsiA'
                 value={formData.opsiA}
-                onChange={(e) => {
-                  setFormData({ ...formData, opsiA: e.target.value });
-                  if (errors.opsiA) {
-                    setErrors({ ...errors, opsiA: '' });
-                  }
-                }}
+                onChange={(e) =>
+                  setFormData({ ...formData, opsiA: e.target.value })
+                }
                 placeholder='Masukkan opsi A'
-                className={errors.opsiA ? 'border-red-500' : ''}
               />
-              {errors.opsiA && (
-                <span className='text-sm text-red-500'>{errors.opsiA}</span>
+              <Input
+                id='gambarOpsiA'
+                value={formData.gambarOpsiA}
+                onChange={(e) =>
+                  setFormData({ ...formData, gambarOpsiA: e.target.value })
+                }
+                placeholder='URL gambar opsi A (opsional)'
+              />
+              {formData.gambarOpsiA && (
+                <TextWithImage
+                  content={`${formData.opsiA} (${formData.gambarOpsiA})`}
+                  isOption={true}
+                />
               )}
             </div>
 
+            {/* Opsi B */}
             <div className='grid gap-2'>
-              <Label htmlFor='opsiB' className='flex items-center gap-1'>
+              <Label htmlFor='opsiB'>
                 Opsi B<span className='text-red-500'>*</span>
               </Label>
               <Input
                 id='opsiB'
                 value={formData.opsiB}
-                onChange={(e) => {
-                  setFormData({ ...formData, opsiB: e.target.value });
-                  if (errors.opsiB) {
-                    setErrors({ ...errors, opsiB: '' });
-                  }
-                }}
+                onChange={(e) =>
+                  setFormData({ ...formData, opsiB: e.target.value })
+                }
                 placeholder='Masukkan opsi B'
-                className={errors.opsiB ? 'border-red-500' : ''}
               />
-              {errors.opsiB && (
-                <span className='text-sm text-red-500'>{errors.opsiB}</span>
+              <Input
+                id='gambarOpsiB'
+                value={formData.gambarOpsiB}
+                onChange={(e) =>
+                  setFormData({ ...formData, gambarOpsiB: e.target.value })
+                }
+                placeholder='URL gambar opsi B (opsional)'
+              />
+              {formData.gambarOpsiB && (
+                <TextWithImage
+                  content={`${formData.opsiB} (${formData.gambarOpsiB})`}
+                  isOption={true}
+                />
               )}
             </div>
 
+            {/* Opsi C */}
             <div className='grid gap-2'>
-              <Label htmlFor='opsiC' className='flex items-center gap-1'>
+              <Label htmlFor='opsiC'>
                 Opsi C<span className='text-red-500'>*</span>
               </Label>
               <Input
                 id='opsiC'
                 value={formData.opsiC}
-                onChange={(e) => {
-                  setFormData({ ...formData, opsiC: e.target.value });
-                  if (errors.opsiC) {
-                    setErrors({ ...errors, opsiC: '' });
-                  }
-                }}
+                onChange={(e) =>
+                  setFormData({ ...formData, opsiC: e.target.value })
+                }
                 placeholder='Masukkan opsi C'
-                className={errors.opsiC ? 'border-red-500' : ''}
               />
-              {errors.opsiC && (
-                <span className='text-sm text-red-500'>{errors.opsiC}</span>
+              <Input
+                id='gambarOpsiC'
+                value={formData.gambarOpsiC}
+                onChange={(e) =>
+                  setFormData({ ...formData, gambarOpsiC: e.target.value })
+                }
+                placeholder='URL gambar opsi C (opsional)'
+              />
+              {formData.gambarOpsiC && (
+                <TextWithImage
+                  content={`${formData.opsiC} (${formData.gambarOpsiC})`}
+                  isOption={true}
+                />
               )}
             </div>
 
+            {/* Opsi D */}
             <div className='grid gap-2'>
-              <Label htmlFor='opsiD' className='flex items-center gap-1'>
+              <Label htmlFor='opsiD'>
                 Opsi D<span className='text-red-500'>*</span>
               </Label>
               <Input
                 id='opsiD'
                 value={formData.opsiD}
-                onChange={(e) => {
-                  setFormData({ ...formData, opsiD: e.target.value });
-                  if (errors.opsiD) {
-                    setErrors({ ...errors, opsiD: '' });
-                  }
-                }}
+                onChange={(e) =>
+                  setFormData({ ...formData, opsiD: e.target.value })
+                }
                 placeholder='Masukkan opsi D'
-                className={errors.opsiD ? 'border-red-500' : ''}
               />
-              {errors.opsiD && (
-                <span className='text-sm text-red-500'>{errors.opsiD}</span>
+              <Input
+                id='gambarOpsiD'
+                value={formData.gambarOpsiD}
+                onChange={(e) =>
+                  setFormData({ ...formData, gambarOpsiD: e.target.value })
+                }
+                placeholder='URL gambar opsi D (opsional)'
+              />
+              {formData.gambarOpsiD && (
+                <TextWithImage
+                  content={`${formData.opsiD} (${formData.gambarOpsiD})`}
+                  isOption={true}
+                />
               )}
             </div>
 
+            {/* Opsi E */}
             <div className='grid gap-2'>
-              <Label htmlFor='opsiE' className='flex items-center gap-1'>
+              <Label htmlFor='opsiE'>
                 Opsi E<span className='text-red-500'>*</span>
               </Label>
               <Input
                 id='opsiE'
                 value={formData.opsiE}
-                onChange={(e) => {
-                  setFormData({ ...formData, opsiE: e.target.value });
-                  if (errors.opsiE) {
-                    setErrors({ ...errors, opsiE: '' });
-                  }
-                }}
+                onChange={(e) =>
+                  setFormData({ ...formData, opsiE: e.target.value })
+                }
                 placeholder='Masukkan opsi E'
-                className={errors.opsiE ? 'border-red-500' : ''}
               />
-              {errors.opsiE && (
-                <span className='text-sm text-red-500'>{errors.opsiE}</span>
+              <Input
+                id='gambarOpsiE'
+                value={formData.gambarOpsiE}
+                onChange={(e) =>
+                  setFormData({ ...formData, gambarOpsiE: e.target.value })
+                }
+                placeholder='URL gambar opsi E (opsional)'
+              />
+              {formData.gambarOpsiE && (
+                <TextWithImage
+                  content={`${formData.opsiE} (${formData.gambarOpsiE})`}
+                  isOption={true}
+                />
               )}
             </div>
 
+            {/* Jawaban Benar */}
             <div className='grid gap-2'>
-              <Label htmlFor='jawabanBenar' className='flex items-center gap-1'>
-                Jawaban Benar
-                <span className='text-red-500'>*</span>
+              <Label htmlFor='jawabanBenar'>
+                Jawaban Benar<span className='text-red-500'>*</span>
               </Label>
               <Select
                 value={formData.jawabanBenar}
-                onValueChange={(value) => {
-                  setFormData({ ...formData, jawabanBenar: value });
-                  if (errors.jawabanBenar) {
-                    setErrors({ ...errors, jawabanBenar: '' });
-                  }
-                }}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, jawabanBenar: value })
+                }
               >
-                <SelectTrigger
-                  className={errors.jawabanBenar ? 'border-red-500' : ''}
-                >
+                <SelectTrigger>
                   <SelectValue placeholder='Pilih jawaban benar' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='A'>Opsi A</SelectItem>
-                  <SelectItem value='B'>Opsi B</SelectItem>
-                  <SelectItem value='C'>Opsi C</SelectItem>
-                  <SelectItem value='D'>Opsi D</SelectItem>
-                  <SelectItem value='E'>Opsi E</SelectItem>
+                  <SelectItem value='A'>A</SelectItem>
+                  <SelectItem value='B'>B</SelectItem>
+                  <SelectItem value='C'>C</SelectItem>
+                  <SelectItem value='D'>D</SelectItem>
+                  <SelectItem value='E'>E</SelectItem>
                 </SelectContent>
               </Select>
-              {errors.jawabanBenar && (
-                <span className='text-sm text-red-500'>
-                  {errors.jawabanBenar}
-                </span>
-              )}
             </div>
 
-            <div className='space-y-2'>
+            {/* Pembahasan */}
+            <div className='grid gap-2'>
               <Label htmlFor='pembahasan'>Pembahasan (Opsional)</Label>
               <Textarea
                 id='pembahasan'
@@ -373,8 +486,21 @@ export function TambahSoalDialog({
                 onChange={(e) =>
                   setFormData({ ...formData, pembahasan: e.target.value })
                 }
-                placeholder='Masukkan pembahasan jawaban'
+                placeholder='Masukkan pembahasan'
               />
+              <Input
+                id='gambarPembahasan'
+                value={formData.gambarPembahasan}
+                onChange={(e) =>
+                  setFormData({ ...formData, gambarPembahasan: e.target.value })
+                }
+                placeholder='URL gambar pembahasan (opsional)'
+              />
+              {formData.gambarPembahasan && (
+                <TextWithImage
+                  content={`${formData.pembahasan} (${formData.gambarPembahasan})`}
+                />
+              )}
             </div>
 
             {error && (

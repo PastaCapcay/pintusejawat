@@ -16,9 +16,4 @@ if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma;
 }
 
-// Cleanup function untuk menutup koneksi
-process.on('beforeExit', async () => {
-  await prisma.$disconnect();
-});
-
 export { prisma };

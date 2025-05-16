@@ -123,11 +123,18 @@ export const columns: ColumnDef<MateriColumn>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row, table }: { row: Row<MateriColumn>; table: any }) => (
-      <DataTableRowActions
-        row={row.original}
-        onSuccess={table.options.meta?.onRefresh}
-      />
-    )
+    cell: ({ row, table }: { row: Row<MateriColumn>; table: any }) => {
+      const meta = table.options.meta as { onRefresh?: () => void };
+      return (
+        <DataTableRowActions
+          row={row.original}
+          onSuccess={() => {
+            if (meta?.onRefresh) {
+              meta.onRefresh();
+            }
+          }}
+        />
+      );
+    }
   }
 ];

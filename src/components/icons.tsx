@@ -15,7 +15,6 @@ import {
   IconLoader2,
   IconLogin,
   IconLogout,
-  IconProps,
   IconShoppingBag,
   IconMoon,
   IconDotsVertical,
@@ -32,8 +31,9 @@ import {
   IconX,
   IconBrandGithub
 } from '@tabler/icons-react';
+import type { TablerIconsProps } from '@tabler/icons-react';
 
-export type Icon = React.ComponentType<IconProps>;
+export type Icon = React.ComponentType<TablerIconsProps>;
 
 export const Icons = {
   dashboard: IconLayoutDashboard,

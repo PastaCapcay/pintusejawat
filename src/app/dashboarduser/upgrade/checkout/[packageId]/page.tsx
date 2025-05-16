@@ -19,7 +19,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { useToast } from '@/components/ui/use-toast';
-import { useUser } from '@clerk/nextjs';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import PageContainer from '@/components/layout/page-container';
 import { Loader2 } from 'lucide-react';
 import {
@@ -54,7 +54,8 @@ export default function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const { user } = useUser();
+  const supabase = createClientComponentClient();
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -64,21 +65,32 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user: currentUser }
+      } = await supabase.auth.getUser();
+      if (currentUser) {
+        setUser(currentUser);
+        setFormData((prev) => ({
+          ...prev,
+          email: currentUser.email || ''
+        }));
+      }
+    };
+
+    getUser();
+  }, [supabase.auth]);
+
+  useEffect(() => {
     if (
       params.packageId &&
       packages[params.packageId as keyof typeof packages]
     ) {
       setSelectedPackage(packages[params.packageId as keyof typeof packages]);
-      if (user?.emailAddresses[0]?.emailAddress) {
-        setFormData((prev) => ({
-          ...prev,
-          email: user.emailAddresses[0].emailAddress
-        }));
-      }
     } else {
       router.push('/dashboarduser/upgrade');
     }
-  }, [params.packageId, user, router]);
+  }, [params.packageId, router]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -183,11 +195,11 @@ export default function CheckoutPage() {
             <CardContent className='space-y-4'>
               <div className='flex justify-between'>
                 <span className='font-medium'>{selectedPackage.name}</span>
-                <span className='text-primary font-bold'>
+                <span className='font-bold text-primary'>
                   {formatPrice(selectedPackage.price)}
                 </span>
               </div>
-              <div className='text-muted-foreground text-sm'>
+              <div className='text-sm text-muted-foreground'>
                 Masa Aktif: {selectedPackage.duration}
               </div>
             </CardContent>
@@ -273,7 +285,7 @@ export default function CheckoutPage() {
                     onChange={handleFileChange}
                     required
                   />
-                  <p className='text-muted-foreground text-sm'>
+                  <p className='text-sm text-muted-foreground'>
                     Format: JPG, PNG, atau GIF. Maksimal 5MB
                   </p>
                 </div>

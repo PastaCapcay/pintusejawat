@@ -1,6 +1,6 @@
-import { UserProfile } from '@clerk/nextjs';
 import { Metadata } from 'next';
 import PageContainer from '@/components/layout/page-container';
+import ProfileViewPage from '@/features/profile/components/profile-view-page';
 
 export const metadata: Metadata = {
   title: 'Profile',
@@ -19,8 +19,8 @@ export default function ProfilePage() {
             </p>
           </div>
         </div>
-        <div className='bg-background overflow-hidden rounded-lg border shadow'>
-          <UserProfile routing='path' path='/dashboarduser/profile' />
+        <div className='overflow-hidden rounded-lg border bg-background shadow'>
+          <ProfileViewPage />
         </div>
       </div>
     </PageContainer>

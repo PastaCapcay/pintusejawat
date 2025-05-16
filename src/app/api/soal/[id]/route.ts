@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 const prisma = new PrismaClient();
 
@@ -9,6 +11,24 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    // Cek apakah user adalah admin
+    const adminUser = await prisma.user.findUnique({
+      where: { id: user.id }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
     const id = (await params).id;
 
     // Get the soal first to get its paketSoalId
@@ -50,6 +70,24 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    // Cek apakah user adalah admin
+    const adminUser = await prisma.user.findUnique({
+      where: { id: user.id }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
     const id = (await params).id;
     const body = await request.json();
 
@@ -126,6 +164,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
     const soal = await prisma.soal.findUnique({
       where: {
         id: params.id

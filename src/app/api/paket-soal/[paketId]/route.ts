@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 const prisma = new PrismaClient();
 
@@ -9,6 +11,15 @@ export async function GET(
   { params }: { params: { paketId: string } }
 ) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
     const { paketId } = await params;
     const paket = await prisma.paketSoal.findUnique({
       where: { id: paketId },
@@ -41,6 +52,24 @@ export async function PUT(
   { params }: { params: { paketId: string } }
 ) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    // Cek apakah user adalah admin
+    const adminUser = await prisma.user.findUnique({
+      where: { id: user.id }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
     const { paketId } = await params;
     const body = await request.json();
     const { judul, deskripsi } = body;
@@ -81,6 +110,24 @@ export async function DELETE(
   { params }: { params: { paketId: string } }
 ) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    // Cek apakah user adalah admin
+    const adminUser = await prisma.user.findUnique({
+      where: { id: user.id }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
     const { paketId } = params;
 
     // Hapus semua tryout history yang terkait dengan paket soal ini

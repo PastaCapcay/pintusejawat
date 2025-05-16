@@ -1,36 +1,148 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUser } from '@clerk/nextjs';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { PrismaClient } from '@prisma/client';
+
+// Definisikan fitur berdasarkan grade
+const gradeFitur = {
+  FREE: ['Akses 1x tryout gratis', 'Akses Terbatas', 'Cocok Buat Coba-Coba'],
+  STARTER: [
+    'Akses selama 3 bulan',
+    'Semua Tryout',
+    'Analisis performa lengkap',
+    'Fitur Basic',
+    'Buat yang baru mulai serius'
+  ],
+  PRO: [
+    'Akses selama 3 bulan',
+    'Semua Tryout',
+    'Analisis performa lengkap',
+    'Latihan Soal',
+    'Modul Belajar Lengkap',
+    'Belajar Lebih Terarah'
+  ],
+  PRO_PLUS: [
+    'Akses sampai lulus',
+    'Akses semua materi',
+    'Analisis performa lengkap',
+    'Bank soal lengkap',
+    'Konsultasi 24 jam dengan mentor',
+    'Garansi perpanjangan jika belum lulus'
+  ]
+};
+
+// Definisikan next upgrade untuk setiap grade
+const nextUpgrade = {
+  FREE: {
+    grade: 'STARTER',
+    text: 'Upgrade ke Starter untuk akses lebih banyak fitur!'
+  },
+  STARTER: {
+    grade: 'PRO',
+    text: 'Upgrade ke Pro untuk akses penuh!'
+  },
+  PRO: {
+    grade: 'PRO_PLUS',
+    text: 'Upgrade ke Pro Plus untuk akses sampai lulus!'
+  }
+};
 
 export function Overview() {
-  const { user } = useUser();
-  const userName = user?.firstName || user?.username || 'User';
+  const [userName, setUserName] = useState('User');
+  const [userGrade, setUserGrade] = useState('FREE');
+  const [loading, setLoading] = useState(true);
+  const supabase = createClientComponentClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        setLoading(true);
+        const {
+          data: { user }
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          // Fetch user data from API endpoint
+          const response = await fetch('/api/user/profile');
+          const userData = await response.json();
+
+          if (userData) {
+            setUserName(userData.name || user.user_metadata?.name || 'User');
+            setUserGrade(userData.grade || 'FREE');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUser();
+  }, [supabase.auth]);
+
+  const handleUpgrade = () => {
+    router.push('/dashboarduser/upgrade');
+  };
+
+  if (loading) {
+    return (
+      <div className='grid gap-4 p-4 md:p-6'>
+        <Card className='mx-auto w-full max-w-4xl'>
+          <CardContent className='p-6'>
+            <div className='text-center'>Memuat data...</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className='grid gap-4'>
-      <Card>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-2xl font-bold'>Selamat Datang!</CardTitle>
+    <div className='grid gap-4 p-4 md:p-6'>
+      <Card className='mx-auto w-full max-w-4xl'>
+        <CardHeader className='flex flex-col items-center justify-between space-y-2 pb-2 md:flex-row md:space-y-0'>
+          <CardTitle className='text-center text-xl font-bold md:text-left md:text-2xl'>
+            Selamat Datang!
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='text-muted-foreground mb-4 text-lg'>
-            Hai <span className='text-primary font-semibold'>{userName}</span>,
+          <div className='mb-4 text-center text-base text-muted-foreground md:text-left md:text-lg'>
+            Hai <span className='font-semibold text-primary'>{userName}</span>,
             selamat datang di PintuSejawat!
           </div>
-          <div className='text-muted-foreground space-y-2'>
-            <p>
-              Platform all-in-one untuk persiapan UKAI yang akan membantu kamu:
+          <div className='space-y-2 text-muted-foreground'>
+            <p className='text-sm md:text-base'>
+              Status Keanggotaan:{' '}
+              <span className='font-semibold text-primary'>
+                {userGrade.replace('_', ' ')}
+              </span>
             </p>
-            <ul className='ml-4 list-inside list-disc space-y-1'>
-              <li>Berlatih dengan ribuan soal UKAI terbaru</li>
-              <li>Mengikuti tryout yang diupdate secara berkala</li>
-              <li>Mempelajari materi-materi penting UKAI</li>
-              <li>Mendapatkan analisis performa detail</li>
+            <p className='text-sm md:text-base'>Fitur yang tersedia:</p>
+            <ul className='ml-4 list-inside list-disc space-y-1 text-sm md:text-base'>
+              {gradeFitur[userGrade as keyof typeof gradeFitur].map(
+                (fitur, index) => (
+                  <li key={index}>{fitur}</li>
+                )
+              )}
             </ul>
-            <p className='text-primary mt-4 font-medium'>
-              Mulai perjalananmu menuju kesuksesan UKAI bersama kami!
-            </p>
+            {userGrade !== 'PRO_PLUS' && (
+              <div className='mt-6 text-center md:text-left'>
+                <p className='mb-2 text-sm font-medium text-primary md:text-base'>
+                  {nextUpgrade[userGrade as keyof typeof nextUpgrade].text}
+                </p>
+                <Button
+                  onClick={handleUpgrade}
+                  className='bg-primary text-white'
+                >
+                  Upgrade Sekarang
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

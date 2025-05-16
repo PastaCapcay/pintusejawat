@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import * as XLSX from 'xlsx';
 
 interface XLSXRecord {
@@ -15,8 +17,28 @@ interface XLSXRecord {
   pembahasan?: string;
 }
 
+const prisma = new PrismaClient();
+
 export async function POST(request: Request) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    // Cek apakah user adalah admin
+    const adminUser = await prisma.user.findUnique({
+      where: { id: user.id }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -55,7 +77,7 @@ export async function POST(request: Request) {
 
     // Validasi format data soal
     const errors: string[] = [];
-    records.slice(1).forEach((record, index) => {
+    records.slice(1).forEach((record: XLSXRecord, index: number) => {
       if (
         !record.pertanyaan ||
         !record.opsiA ||
@@ -84,51 +106,45 @@ export async function POST(request: Request) {
       );
     }
 
-    // Buat paket soal
+    // Buat paket soal baru
     const paketSoal = await prisma.paketSoal.create({
       data: {
         judul: firstRow.judul,
-        deskripsi: firstRow.deskripsi || null,
-        soal: {
-          create: records.slice(1).map((record) => ({
-            pertanyaan: record.pertanyaan,
-            opsiA: record.opsiA,
-            opsiB: record.opsiB,
-            opsiC: record.opsiC,
-            opsiD: record.opsiD,
-            opsiE: record.opsiE,
-            jawabanBenar: record.jawabanBenar.toUpperCase(),
-            pembahasan: record.pembahasan || null
-          }))
-        }
-      },
-      include: {
-        soal: true
+        deskripsi: firstRow.deskripsi || null
       }
     });
 
+    // Upload soal ke database
+    const soalData = records.slice(1).map((record: XLSXRecord) => ({
+      pertanyaan: record.pertanyaan,
+      opsiA: record.opsiA,
+      opsiB: record.opsiB,
+      opsiC: record.opsiC,
+      opsiD: record.opsiD,
+      opsiE: record.opsiE,
+      jawabanBenar: record.jawabanBenar.toUpperCase(),
+      pembahasan: record.pembahasan || null,
+      paketSoalId: paketSoal.id
+    }));
+
+    await prisma.soal.createMany({
+      data: soalData
+    });
+
     return NextResponse.json({
-      success: true,
-      message: `Paket soal berhasil dibuat dengan ${records.length - 1} soal`,
+      message: 'Paket soal berhasil diupload',
       data: {
-        id: paketSoal.id,
-        judul: paketSoal.judul,
-        deskripsi: paketSoal.deskripsi,
-        jumlahSoal: records.length - 1
+        paketSoal,
+        soalCount: soalData.length
       }
     });
   } catch (error) {
-    console.error('[PAKET_SOAL_UPLOAD] Error:', error);
-    if (error instanceof Error) {
-      console.error('[PAKET_SOAL_UPLOAD] Error message:', error.message);
-      console.error('[PAKET_SOAL_UPLOAD] Error stack:', error.stack);
-    }
+    console.error('Error uploading paket soal:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: 'Gagal mengupload soal. Silakan coba lagi.'
-      },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

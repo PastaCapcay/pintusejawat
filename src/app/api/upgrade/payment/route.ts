@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { auth as clerkAuth } from '@clerk/nextjs';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import { JWT } from 'google-auth-library';
+import { cookies } from 'next/headers';
 
 const FOLDER_ID = '1uPLkQK87kznpM5Cm1980WtuuzD6XUh_2';
 
@@ -48,8 +49,12 @@ async function sendWhatsAppNotification(data: {
 
 export async function POST(request: Request) {
   try {
-    const { userId } = clerkAuth();
-    if (!userId) {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -96,7 +101,7 @@ export async function POST(request: Request) {
 
     // Upload ke Google Drive
     const fileMetadata = {
-      name: `bukti_pembayaran_${userId}_${new Date().getTime()}.${paymentProof.name.split('.').pop()}`,
+      name: `bukti_pembayaran_${user.id}_${new Date().getTime()}.${paymentProof.name.split('.').pop()}`,
       parents: [FOLDER_ID]
     };
 

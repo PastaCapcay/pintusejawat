@@ -10,21 +10,81 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { useUser } from '@clerk/nextjs';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
-import { LogoutButton } from '@/components/logout-button';
+import { useEffect, useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/components/ui/use-toast';
+
+interface UserData {
+  name: string;
+  email: string;
+  imageUrl?: string;
+}
 
 export function UserNav(): JSX.Element | null {
-  const { user } = useUser();
   const router = useRouter();
+  const supabase = createClientComponentClient();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const { toast } = useToast();
 
-  if (!user) return null;
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      if (user) {
+        setUserData({
+          name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+          email: user.email || '',
+          imageUrl: user.user_metadata?.avatar_url
+        });
+      }
+    };
+
+    getUser();
+  }, [supabase.auth]);
+
+  if (!userData) return null;
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      router.push('/auth/sign-in');
+    } catch (error) {
+      console.error('Error during logout:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Terjadi kesalahan saat logout. Silakan coba lagi.'
+      });
+    }
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
-          <UserAvatarProfile user={user} />
+          <UserAvatarProfile
+            user={{
+              fullName: userData.name,
+              imageUrl: userData.imageUrl,
+              emailAddresses: [{ emailAddress: userData.email }]
+            }}
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -35,9 +95,9 @@ export function UserNav(): JSX.Element | null {
       >
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col space-y-1'>
-            <p className='text-sm leading-none font-medium'>{user.fullName}</p>
-            <p className='text-muted-foreground text-xs leading-none'>
-              {user.emailAddresses[0].emailAddress}
+            <p className='text-sm font-medium leading-none'>{userData.name}</p>
+            <p className='text-xs leading-none text-muted-foreground'>
+              {userData.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -48,7 +108,30 @@ export function UserNav(): JSX.Element | null {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <LogoutButton variant='dropdown' />
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem
+              className='text-red-600'
+              onSelect={(e) => e.preventDefault()}
+            >
+              Logout
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Konfirmasi Logout</AlertDialogTitle>
+              <AlertDialogDescription>
+                Apakah Anda yakin ingin keluar dari sistem?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Batal</AlertDialogCancel>
+              <AlertDialogAction onClick={handleLogout}>
+                Logout
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import * as XLSX from 'xlsx';
-
-const prisma = new PrismaClient();
+import { convertGDriveLink } from '@/lib/utils';
 
 interface XLSXRecord {
   pertanyaan: string;
@@ -15,8 +16,49 @@ interface XLSXRecord {
   pembahasan?: string;
 }
 
+const prisma = new PrismaClient();
+
+// Fungsi untuk mengekstrak dan mengkonversi link gambar
+function processContentWithImage(content: string): string {
+  if (!content) return content;
+
+  // Cek apakah ada format pertanyaan(link) - tanpa spasi
+  // atau format pertanyaan (link) - dengan spasi
+  const matches = content.match(/^(.*?)\s*\((https?:\/\/.*?)\)$/);
+  if (matches) {
+    const [_, text, imageUrl] = matches;
+    const convertedUrl = convertGDriveLink(imageUrl);
+    return `${text.trim()}(${convertedUrl})`;
+  }
+
+  // Cek apakah konten adalah URL langsung
+  if (content.startsWith('http://') || content.startsWith('https://')) {
+    return convertGDriveLink(content);
+  }
+
+  return content;
+}
+
 export async function POST(request: Request) {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    // Cek apakah user adalah admin
+    const adminUser = await prisma.user.findUnique({
+      where: { id: user.id }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const paketSoalId = formData.get('paketSoalId') as string;
@@ -74,19 +116,21 @@ export async function POST(request: Request) {
       }
     }
 
-    // Upload soal ke database
+    // Upload soal ke database dengan konversi link gambar
     const createdSoal = await prisma.$transaction(
-      records.map((record) =>
+      records.map((record: XLSXRecord) =>
         prisma.soal.create({
           data: {
-            pertanyaan: record.pertanyaan,
-            opsiA: record.opsiA,
-            opsiB: record.opsiB,
-            opsiC: record.opsiC,
-            opsiD: record.opsiD,
-            opsiE: record.opsiE,
+            pertanyaan: processContentWithImage(record.pertanyaan),
+            opsiA: processContentWithImage(record.opsiA),
+            opsiB: processContentWithImage(record.opsiB),
+            opsiC: processContentWithImage(record.opsiC),
+            opsiD: processContentWithImage(record.opsiD),
+            opsiE: processContentWithImage(record.opsiE),
             jawabanBenar: record.jawabanBenar.toUpperCase(),
-            pembahasan: record.pembahasan || null,
+            pembahasan: record.pembahasan
+              ? processContentWithImage(record.pembahasan)
+              : null,
             paketSoalId
           }
         })

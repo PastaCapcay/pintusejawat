@@ -1,15 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export async function GET(
   request: Request,
   { params }: { params: { paketId: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
 
-    if (!userId) {
+    if (!user?.id) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 

@@ -8,25 +8,22 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  clerkId       String         @unique
-  email         String         @unique
-  name          String?
-  role          Role          @default(USER)
-  grade         Grade         @default(FREE)
-  createdAt     DateTime      @default(now())
-  activeSessionId String?     @unique  // untuk menyimpan session aktif
-  lastLoginAt    DateTime?    // untuk tracking waktu login terakhir
-  tryoutHistory TryoutHistory[] @relation("UserToTryoutHistory")
+  id              String    @id
+  email           String    @unique
+  name            String?
+  role            Role      @default(USER)
+  grade           Grade     @default(FREE)
+  createdAt       DateTime  @default(now())
+  tryoutHistory   TryoutHistory[]
 }
 
 model PaketSoal {
-  id            String         @id @default(uuid())
+  id            String          @id @default(uuid())
   judul         String
   deskripsi     String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  soal          Soal[]        @relation("PaketKeSoal")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  soal          Soal[]          @relation("PaketKeSoal")
   tryoutHistory TryoutHistory[] @relation("PaketSoalToTryoutHistory")
 }
 
@@ -35,11 +32,11 @@ model TryoutHistory {
   userId      String
   paketSoalId String
   score       Int
-  timeSpent   Int      // dalam detik
-  answers     Json     // menyimpan jawaban user
-  createdAt   DateTime @default(now())
-  user        User     @relation("UserToTryoutHistory", fields: [userId], references: [id])
+  timeSpent   Int
+  answers     Json
+  createdAt   DateTime  @default(now())
   paketSoal   PaketSoal @relation("PaketSoalToTryoutHistory", fields: [paketSoalId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([paketSoalId])

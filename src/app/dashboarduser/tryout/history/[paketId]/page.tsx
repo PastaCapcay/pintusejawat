@@ -22,7 +22,7 @@ import {
   Legend
 } from 'recharts';
 import { Button } from '@/components/ui/button';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 interface TryoutHistory {
   id: string;
@@ -55,41 +55,25 @@ interface TooltipProps {
   payload?: Array<{
     value: number;
     dataKey: string;
-    name: string;
+    color?: string;
+    payload: {
+      date: string;
+    };
   }>;
   label?: string;
 }
 
-const chartConfig = {
-  score: {
-    label: 'Nilai',
-    color: 'hsl(var(--chart-1))'
-  },
-  time: {
-    label: 'Waktu (menit)',
-    color: 'hsl(var(--chart-2))'
-  }
-};
-
-const formatTimeForChart = (seconds: number): number => {
-  // Konversi ke menit dengan maksimal 2 desimal, tanpa trailing zeros
-  return Number((seconds / 60).toFixed(2));
-};
-
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className='bg-background rounded-lg border p-3 shadow-lg'>
+      <div className='rounded-lg border bg-background p-3 shadow-sm'>
         <p className='font-medium'>{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={index} style={{ color: entry.stroke }}>
-            {entry.name === 'Waktu'
-              ? `${entry.name}: ${
-                  entry.value < 1
-                    ? `${Math.round(entry.value * 60)} detik`
-                    : `${Number(entry.value)} menit`
-                }`
-              : `${entry.name}: ${Number(entry.value)}`}
+        <p className='text-sm text-muted-foreground'>
+          {payload[0]?.payload?.date}
+        </p>
+        {payload.map((item, index) => (
+          <p key={index} className='text-sm' style={{ color: item.color }}>
+            {item.dataKey}: {item.value}
           </p>
         ))}
       </div>
@@ -98,19 +82,34 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
+const chartConfig = {
+  score: {
+    label: 'Nilai',
+    color: '#10b981' // emerald-500
+  },
+  time: {
+    label: 'Waktu (menit)',
+    color: '#6366f1' // indigo-500
+  }
+};
+
+const formatTimeForChart = (seconds: number): number => {
+  return Number((seconds / 60).toFixed(2));
+};
+
+const getGrade = (score: number) => {
+  if (score >= 80) return { text: 'Sangat Baik', color: 'text-green-500' };
+  if (score >= 70) return { text: 'Baik', color: 'text-blue-500' };
+  if (score >= 60) return { text: 'Cukup', color: 'text-yellow-500' };
+  return { text: 'Perlu Ditingkatkan', color: 'text-red-500' };
+};
+
 const calculateScore = (
   correctAnswers: number,
   totalQuestions: number
 ): number => {
   const score = (correctAnswers / totalQuestions) * 100;
   return Math.round(score * 100) / 100;
-};
-
-const getGrade = (score: number) => {
-  if (score >= 80) return { text: 'Sangat Baik', color: 'bg-green-500' };
-  if (score >= 70) return { text: 'Baik', color: 'bg-blue-500' };
-  if (score >= 60) return { text: 'Cukup', color: 'bg-yellow-500' };
-  return { text: 'Perlu Ditingkatkan', color: 'bg-red-500' };
 };
 
 export default function TryoutHistoryDetailPage() {
@@ -171,7 +170,9 @@ export default function TryoutHistoryDetailPage() {
   };
 
   const calculateStats = (attempts: TryoutHistory[]): PaketStats => {
-    const scores = attempts.map((a) => a.score);
+    const scores = attempts.map((a) =>
+      calculateScore(a.score, a.paketSoal.soal.length)
+    );
     const times = attempts.map((a) => a.timeSpent);
 
     return {
@@ -239,10 +240,9 @@ export default function TryoutHistoryDetailPage() {
 
   const stats = calculateStats(history);
   const chartData = getChartData(history);
-  const paketSoal = history[0].paketSoal;
 
   return (
-    <div className='bg-background h-screen overflow-y-auto'>
+    <div className='h-screen overflow-y-auto bg-background'>
       <div className='p-8'>
         <div className='mx-auto max-w-7xl space-y-8 pb-16'>
           <div className='flex items-center gap-4'>
@@ -260,176 +260,192 @@ export default function TryoutHistoryDetailPage() {
             </div>
           </div>
 
-          {history.length > 0 ? (
-            <div className='space-y-6'>
-              <div className='grid gap-4 md:grid-cols-3'>
-                <Card>
-                  <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                    <CardTitle className='text-sm font-medium'>
-                      Nilai Tertinggi
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='text-2xl font-bold text-green-600'>
-                      {calculateScore(
-                        Math.max(...history.map((h) => h.score)),
-                        history[0].paketSoal.soal.length
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                    <CardTitle className='text-sm font-medium'>
-                      Nilai Terendah
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='text-2xl font-bold text-red-600'>
-                      {calculateScore(
-                        Math.min(...history.map((h) => h.score)),
-                        history[0].paketSoal.soal.length
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                    <CardTitle className='text-sm font-medium'>
-                      Rata-rata Nilai
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='text-2xl font-bold'>
-                      {calculateScore(
-                        Math.round(
-                          history.reduce((acc, h) => acc + h.score, 0) /
-                            history.length
-                        ),
-                        history[0].paketSoal.soal.length
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Grafik Perkembangan</CardTitle>
-                  <CardDescription>
-                    Menampilkan nilai dan waktu pengerjaan untuk setiap
-                    percobaan
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='h-[400px] w-full'>
-                    <ResponsiveContainer width='100%' height='100%'>
-                      <LineChart data={chartData}>
-                        <CartesianGrid
-                          strokeDasharray='3 3'
-                          className='stroke-muted'
-                        />
-                        <XAxis
-                          dataKey='name'
-                          tickLine={false}
-                          axisLine={false}
-                          tick={{ fill: 'hsl(var(--foreground))' }}
-                          tickMargin={10}
-                        />
-                        <YAxis
-                          yAxisId='left'
-                          tickLine={false}
-                          axisLine={false}
-                          tick={{ fill: 'hsl(var(--foreground))' }}
-                        />
-                        <YAxis
-                          yAxisId='right'
-                          orientation='right'
-                          tickLine={false}
-                          axisLine={false}
-                          tick={{ fill: 'hsl(var(--foreground))' }}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend />
-                        <Line
-                          yAxisId='left'
-                          type='monotone'
-                          dataKey='Nilai'
-                          stroke={chartConfig.score.color}
-                          strokeWidth={2}
-                          dot={{ r: 4, fill: chartConfig.score.color }}
-                          activeDot={{ r: 8 }}
-                        />
-                        <Line
-                          yAxisId='right'
-                          type='monotone'
-                          dataKey='Waktu'
-                          stroke={chartConfig.time.color}
-                          strokeWidth={2}
-                          dot={{ r: 4, fill: chartConfig.time.color }}
-                          activeDot={{ r: 8 }}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Riwayat Pengerjaan</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-4'>
-                    {history.map((attempt) => {
-                      const nilai = calculateScore(
-                        attempt.score,
-                        attempt.paketSoal.soal.length
-                      );
-                      const grade = getGrade(nilai);
-                      return (
-                        <div
-                          key={attempt.id}
-                          className='flex items-center justify-between rounded-lg border p-4'
-                        >
-                          <div className='space-y-1'>
-                            <div className='flex items-center gap-2'>
-                              <Badge className={grade.color}>
-                                {grade.text}
-                              </Badge>
-                              <span className='font-medium'>
-                                Nilai: {nilai}
-                              </span>
-                            </div>
-                            <div className='text-muted-foreground flex items-center gap-4 text-sm'>
-                              <div className='flex items-center gap-1'>
-                                <Timer className='h-4 w-4' />
-                                {formatTime(attempt.timeSpent)}
-                              </div>
-                              <div className='flex items-center gap-1'>
-                                <Calendar className='h-4 w-4' />
-                                {formatDate(attempt.createdAt)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          ) : (
+          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
             <Card>
-              <CardContent className='py-8'>
-                <div className='flex flex-col items-center justify-center text-center'>
-                  <p className='text-muted-foreground mt-2 text-sm'>
-                    Belum ada history tryout untuk paket soal ini
-                  </p>
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
+                  Nilai Tertinggi
+                </CardTitle>
+                <Trophy className='h-4 w-4 text-green-500' />
+              </CardHeader>
+              <CardContent>
+                <div className='text-2xl font-bold text-green-500'>
+                  {stats.highestScore}
                 </div>
               </CardContent>
             </Card>
-          )}
+
+            <Card>
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
+                  Nilai Terendah
+                </CardTitle>
+                <Trophy className='h-4 w-4 text-red-500' />
+              </CardHeader>
+              <CardContent>
+                <div className='text-2xl font-bold text-red-500'>
+                  {stats.lowestScore}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
+                  Rata-rata Nilai
+                </CardTitle>
+                <Trophy className='h-4 w-4 text-blue-500' />
+              </CardHeader>
+              <CardContent>
+                <div className='text-2xl font-bold text-blue-500'>
+                  {stats.averageScore}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
+                  Total Percobaan
+                </CardTitle>
+                <Trophy className='h-4 w-4 text-purple-500' />
+              </CardHeader>
+              <CardContent>
+                <div className='text-2xl font-bold text-purple-500'>
+                  {stats.totalAttempts}x
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Grafik Perkembangan</CardTitle>
+              <CardDescription>
+                Menampilkan nilai dan waktu pengerjaan untuk setiap percobaan
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='h-[400px] w-full'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={chartData}>
+                    <CartesianGrid
+                      strokeDasharray='3 3'
+                      className='stroke-muted'
+                    />
+                    <XAxis
+                      dataKey='name'
+                      stroke='currentColor'
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      yAxisId='left'
+                      stroke={chartConfig.score.color}
+                      domain={[0, 100]}
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      label={{
+                        value: 'Nilai',
+                        angle: -90,
+                        position: 'insideLeft'
+                      }}
+                    />
+                    <YAxis
+                      yAxisId='right'
+                      orientation='right'
+                      stroke={chartConfig.time.color}
+                      domain={['auto', 'auto']}
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      label={{
+                        value: 'Waktu (menit)',
+                        angle: 90,
+                        position: 'insideRight'
+                      }}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Line
+                      yAxisId='left'
+                      type='monotone'
+                      dataKey='Nilai'
+                      stroke={chartConfig.score.color}
+                      strokeWidth={2}
+                      dot={{ r: 4, fill: chartConfig.score.color }}
+                      activeDot={{ r: 8 }}
+                    />
+                    <Line
+                      yAxisId='right'
+                      type='monotone'
+                      dataKey='Waktu'
+                      stroke={chartConfig.time.color}
+                      strokeWidth={2}
+                      dot={{ r: 4, fill: chartConfig.time.color }}
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Riwayat Pengerjaan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className='h-[400px]'>
+                <div className='space-y-4'>
+                  {history.map((attempt) => {
+                    const nilai = calculateScore(
+                      attempt.score,
+                      attempt.paketSoal.soal.length
+                    );
+                    const grade = getGrade(nilai);
+                    return (
+                      <div
+                        key={attempt.id}
+                        className='flex items-center justify-between rounded-lg border p-4'
+                      >
+                        <div className='space-y-1'>
+                          <div className='flex items-center gap-2'>
+                            <Badge
+                              variant={
+                                nilai >= 80
+                                  ? 'secondary'
+                                  : nilai >= 70
+                                    ? 'outline'
+                                    : nilai >= 60
+                                      ? 'default'
+                                      : 'destructive'
+                              }
+                            >
+                              {grade.text}
+                            </Badge>
+                            <span className='font-medium'>Nilai: {nilai}</span>
+                          </div>
+                          <div className='flex items-center gap-4 text-sm text-muted-foreground'>
+                            <div className='flex items-center gap-1'>
+                              <Timer className='h-4 w-4' />
+                              {formatTime(attempt.timeSpent)}
+                            </div>
+                            <div className='flex items-center gap-1'>
+                              <Calendar className='h-4 w-4' />
+                              {formatDate(attempt.createdAt)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

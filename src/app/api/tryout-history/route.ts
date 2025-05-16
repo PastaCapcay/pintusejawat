@@ -1,22 +1,18 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
 
 // GET /api/tryout-history
 export async function GET() {
   try {
-    const { userId: clerkUserId } = await auth();
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
 
-    if (!clerkUserId) {
+    if (!user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkId: clerkUserId }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const tryoutHistory = await prisma.tryoutHistory.findMany({
@@ -46,22 +42,18 @@ export async function GET() {
 // POST /api/tryout-history
 export async function POST(request: Request) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
 
-    console.log('Processing tryout history POST request:', { clerkUserId });
-
-    if (!clerkUserId) {
-      console.log('Unauthorized: No clerkUserId found');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkId: clerkUserId }
+    console.log('Processing tryout history POST request:', {
+      userId: user?.id
     });
 
-    if (!user) {
-      console.log('User not found for clerkId:', clerkUserId);
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    if (!user?.id) {
+      console.log('Unauthorized: No user found');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();

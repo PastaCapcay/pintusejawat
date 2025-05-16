@@ -13,7 +13,7 @@ This is a starter template using the following stack:
 - Schema Validations - [Zod](https://zod.dev)
 - State Management - [Zustand](https://zustand-demo.pmnd.rs)
 - Search params state manager - [Nuqs](https://nuqs.47ng.com/)
-- Auth - [Clerk](https://go.clerk.com/ILdYhn7)
+- Auth - [Supabase](https://supabase.com)
 - Tables - [Tanstack Data Tables](https://ui.shadcn.com/docs/components/data-table) • [Dice UI](https://www.diceui.com/docs/components/data-table)
 - Forms - [React Hook Form](https://ui.shadcn.com/docs/components/form)
 - Command+k interface - [kbar](https://kbar.vercel.app/)
@@ -25,11 +25,11 @@ This is a starter template using the following stack:
 
 | Pages          | Specifications                                                                                                                                                                                                                                                          |
 | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Signup/Signin  | Authentication with **Clerk** provides secure authentication and user management with multiple sign-in options including passwordless authentication, social logins, and enterprise SSO - all designed to enhance security while delivering a seamless user experience. |
+| Signup/Signin  | Authentication with **Supabase** provides secure authentication and user management with multiple sign-in options including email/password authentication and social logins - all designed to enhance security while delivering a seamless user experience. |
 | Dashboard      | Cards with recharts graphs for analytics. Parallel routes in the overview sections with independent loading, error handling, and isolated component rendering.                                                                                                          |
 | Product        | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs                                                                                                                                       |
 | Product/new    | A Product Form with shadcn form (react-hook-form + zod).                                                                                                                                                                                                                |
-| Profile        | Clerk's full-featured account management UI that allows users to manage their profile and security settings                                                                                                                                                             |
+| Profile        | User profile management interface that allows users to manage their profile and security settings                                                                                                                                                             |
 | Kanban Board   | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                                                                                                                                                                  |
 | Not Found      | Not Found Page Added in the root level                                                                                                                                                                                                                                  |
 

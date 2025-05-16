@@ -34,24 +34,24 @@ import { MateriColumn } from './columns';
 const formSchema = z.object({
   nama: z.string().min(1, 'Nama materi wajib diisi'),
   deskripsi: z.string().optional(),
-  jenis: z.nativeEnum(JenisMateri),
-  link: z.string().url('Link harus berupa URL yang valid')
+  jenis: z.enum([JenisMateri.VIDEO, JenisMateri.DOKUMEN]),
+  link: z.string().min(1, 'Link materi wajib diisi')
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface EditMateriDialogProps {
-  materi: MateriColumn;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
+  materi: MateriColumn;
 }
 
 export function EditMateriDialog({
-  materi,
   open,
   onOpenChange,
-  onSuccess
+  onSuccess,
+  materi
 }: EditMateriDialogProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -74,14 +74,18 @@ export function EditMateriDialog({
       });
 
       if (!response.ok) {
-        throw new Error('Gagal mengupdate materi');
+        const data = await response.json();
+        throw new Error(data.error || 'Terjadi kesalahan');
       }
 
-      toast.success('Materi berhasil diupdate');
-      onSuccess();
+      toast.success('Materi berhasil diperbarui');
+      if (onSuccess) {
+        onSuccess();
+      }
+      onOpenChange(false);
     } catch (error) {
-      console.error(error);
-      toast.error('Gagal mengupdate materi');
+      console.error('Error:', error);
+      toast.error(error instanceof Error ? error.message : 'Terjadi kesalahan');
     }
   };
 
@@ -91,7 +95,7 @@ export function EditMateriDialog({
         <DialogHeader>
           <DialogTitle>Edit Materi</DialogTitle>
           <DialogDescription>
-            Edit informasi materi pembelajaran
+            Edit informasi materi pembelajaran di sini
           </DialogDescription>
         </DialogHeader>
 

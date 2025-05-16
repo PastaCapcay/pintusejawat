@@ -27,3 +27,14 @@ export function formatBytes(
 
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export function convertGDriveLink(rawUrl: string): string {
+  if (!rawUrl) return '';
+
+  const match = rawUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+  if (match && match[1]) {
+    const fileId = match[1];
+    return `https://drive.google.com/uc?export=view&id=${fileId}`;
+  }
+  return rawUrl;
+}
