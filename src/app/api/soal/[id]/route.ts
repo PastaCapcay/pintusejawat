@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-
-const prisma = new PrismaClient();
 
 export async function DELETE(
   request: Request,
@@ -60,8 +58,6 @@ export async function DELETE(
       { error: 'Internal Server Error' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -154,8 +150,6 @@ export async function PUT(
       { error: 'Internal Server Error' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -187,7 +181,5 @@ export async function GET(
   } catch (error) {
     console.error('[SOAL_GET]', error);
     return new NextResponse('Internal error', { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }

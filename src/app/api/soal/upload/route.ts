@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import * as XLSX from 'xlsx';
@@ -15,8 +15,6 @@ interface XLSXRecord {
   jawabanBenar: string;
   pembahasan?: string;
 }
-
-const prisma = new PrismaClient();
 
 // Fungsi untuk mengekstrak dan mengkonversi link gambar
 function processContentWithImage(content: string): string {
@@ -147,7 +145,5 @@ export async function POST(request: Request) {
       { error: 'Terjadi kesalahan saat mengupload soal' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

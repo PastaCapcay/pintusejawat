@@ -40,7 +40,7 @@ export const metadata: Metadata = {
       }
     ]
   },
-  manifest: '/site.webmanifest'
+  manifest: '/manifest.json'
 };
 
 export default function RootLayout({

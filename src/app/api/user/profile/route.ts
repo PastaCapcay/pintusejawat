@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -36,7 +34,5 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }

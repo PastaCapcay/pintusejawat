@@ -80,15 +80,15 @@ export default function TryoutFreePage() {
             <CardContent className='space-y-4'>
               <p>
                 Tryout Gratis adalah program latihan ujian yang kami sediakan
-                untuk membantu Anda mempersiapkan diri menghadapi ujian CPNS,
-                PPPK, dan Kedinasan. Dengan mengikuti tryout gratis ini, Anda
-                akan mendapatkan:
+                untuk membantu Anda mempersiapkan diri menghadapi Ujian
+                Kompetensi Apoteker Indonesia (UKAI). Dengan mengikuti tryout
+                gratis ini, Anda akan mendapatkan:
               </p>
               <ul className='ml-4 list-inside list-disc space-y-2'>
-                <li>Akses ke 10 soal latihan terbaru</li>
+                <li>Akses ke 10 soal latihan UKAI terbaru</li>
                 <li>Waktu pengerjaan 10 menit</li>
                 <li>Pembahasan singkat setiap soal</li>
-                <li>Nilai dan analisis kemampuan dasar</li>
+                <li>Nilai dan analisis kemampuan per bidang kompetensi</li>
               </ul>
             </CardContent>
           </Card>
@@ -109,28 +109,31 @@ export default function TryoutFreePage() {
                   Hasil akan langsung ditampilkan setelah selesai mengerjakan
                 </li>
                 <li>Pembahasan hanya diberikan untuk 3 soal pertama</li>
+                <li>Soal yang diberikan merupakan contoh soal UKAI</li>
               </ul>
             </CardContent>
           </Card>
 
           {/* Upgrade ke Premium */}
-          <Card className='from-primary/5 via-primary/10 to-primary/5 bg-gradient-to-br'>
+          <Card className='bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5'>
             <CardHeader>
               <CardTitle className='text-xl'>
                 Ingin Hasil yang Maksimal?
               </CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
-              <p className='text-lg'>Upgrade ke paket Premium dan dapatkan:</p>
+              <p className='text-lg'>Upgrade paket anda dan dapatkan:</p>
               <ul className='ml-4 list-inside list-disc space-y-2'>
-                <li>Akses ke 1000+ soal terbaru</li>
-                <li>Pembahasan lengkap setiap soal</li>
-                <li>Tryout tidak terbatas</li>
-                <li>Analisis kemampuan mendalam</li>
-                <li>Video pembelajaran eksklusif</li>
-                <li>Konsultasi dengan pengajar</li>
+                <li>Akses ke 1000+ bank soal UKAI terbaru</li>
+                <li>
+                  Pembahasan lengkap setiap soal oleh Apoteker berpengalaman
+                </li>
+                <li>Tryout UKAI tidak terbatas</li>
+                <li>Analisis kemampuan per bidang kompetensi</li>
+                <li>Video pembelajaran materi UKAI</li>
+                <li>Konsultasi dengan Apoteker pembimbing</li>
               </ul>
-              <p className='text-muted-foreground mt-4 text-sm'>
+              <p className='mt-4 text-sm text-muted-foreground'>
                 *Harga spesial untuk 100 pendaftar pertama
               </p>
             </CardContent>

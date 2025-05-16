@@ -43,7 +43,7 @@ export function Overview() {
               <li>Analisis performa platform</li>
             </ul>
             <p className='mt-4 font-medium text-primary'>
-              Mari bantu calon dokter Indonesia meraih kesuksesan UKAI!
+              Mari bantu calon Apoteker Indonesia meraih kesuksesan UKAI!
             </p>
           </div>
         </CardContent>

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-
-const prisma = new PrismaClient();
 
 export async function GET() {
   try {
@@ -31,8 +29,6 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching paket soal:', error);
     return NextResponse.json([]);
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -80,7 +76,5 @@ export async function POST(request: Request) {
       { error: 'Internal Server Error' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
