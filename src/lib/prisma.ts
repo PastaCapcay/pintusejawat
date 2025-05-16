@@ -1,7 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({
+    log: ['error'],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL
+      }
+    }
+  });
 };
 
 declare global {
@@ -13,4 +20,10 @@ const prisma = globalThis.prisma ?? prismaClientSingleton();
 if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma;
 }
+
+// Cleanup function untuk menutup koneksi
+process.on('beforeExit', async () => {
+  await prisma.$disconnect();
+});
+
 export { prisma };
