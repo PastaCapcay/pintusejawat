@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 
 // Cache response for 1 minute
 export const revalidate = 60;
@@ -11,8 +9,12 @@ export const revalidate = 60;
 // GET /api/tryout-history
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -26,7 +28,7 @@ export async function GET() {
     const histories = await prisma.tryoutHistory.findMany({
       where: {
         user: {
-          email: session.user.email
+          email: user.email
         },
         createdAt: {
           gte: thirtyDaysAgo
@@ -39,8 +41,8 @@ export async function GET() {
         paketSoal: {
           select: {
             id: true,
-            name: true,
-            description: true
+            judul: true,
+            deskripsi: true
           }
         }
       },
@@ -68,25 +70,12 @@ export async function POST(request: Request) {
       data: { user }
     } = await supabase.auth.getUser();
 
-    console.log('Processing tryout history POST request:', {
-      userId: user?.id
-    });
-
     if (!user?.id) {
-      console.log('Unauthorized: No user found');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { paketSoalId, score, timeSpent, answers } = body;
-
-    console.log('Creating tryout history with data:', {
-      userId: user.id,
-      paketSoalId,
-      score,
-      timeSpent,
-      answersCount: Object.keys(answers).length
-    });
 
     const tryoutHistory = await prisma.tryoutHistory.create({
       data: {
@@ -98,7 +87,6 @@ export async function POST(request: Request) {
       }
     });
 
-    console.log('Successfully created tryout history:', tryoutHistory.id);
     return NextResponse.json(tryoutHistory);
   } catch (error) {
     console.error('[TRYOUT_HISTORY_POST]', error);

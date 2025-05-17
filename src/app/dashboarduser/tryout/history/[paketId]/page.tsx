@@ -189,17 +189,27 @@ export default function TryoutHistoryDetailPage() {
   };
 
   const getChartData = (attempts: TryoutHistory[]) => {
+    // Urutkan attempts berdasarkan tanggal
     const sortedAttempts = [...attempts].sort(
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
-    return sortedAttempts.map((attempt, index) => ({
-      name: `Percobaan ${index + 1}`,
-      Nilai: calculateScore(attempt.score, attempt.paketSoal.soal.length),
-      Waktu: formatTimeForChart(attempt.timeSpent),
-      date: formatDate(attempt.createdAt)
-    }));
+    // Pastikan nilai dan waktu selalu ada
+    return sortedAttempts.map((attempt, index) => {
+      const nilai = calculateScore(
+        attempt.score,
+        attempt.paketSoal.soal.length
+      );
+      const waktu = formatTimeForChart(attempt.timeSpent);
+
+      return {
+        name: `Percobaan ${index + 1}`,
+        Nilai: nilai || 0, // Fallback ke 0 jika nilai undefined
+        Waktu: waktu || 0, // Fallback ke 0 jika waktu undefined
+        date: formatDate(attempt.createdAt)
+      };
+    });
   };
 
   if (loading) {
@@ -377,6 +387,7 @@ export default function TryoutHistoryDetailPage() {
                       strokeWidth={2}
                       dot={{ r: 4, fill: chartConfig.score.color }}
                       activeDot={{ r: 8 }}
+                      connectNulls={true}
                     />
                     <Line
                       yAxisId='right'
@@ -386,6 +397,7 @@ export default function TryoutHistoryDetailPage() {
                       strokeWidth={2}
                       dot={{ r: 4, fill: chartConfig.time.color }}
                       activeDot={{ r: 8 }}
+                      connectNulls={true}
                     />
                   </LineChart>
                 </ResponsiveContainer>
