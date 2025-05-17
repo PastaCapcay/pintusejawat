@@ -68,8 +68,7 @@ export async function GET() {
 
     // Hapus jawabanBenar dari response untuk keamanan
     const sanitizedSoals = selectedSoals.map(
-      ({ jawabanBenar, ...soal }: { jawabanBenar: string } & Partial<Soal>) =>
-        soal
+      ({ jawabanBenar, ...soal }) => soal
     );
 
     // Log jumlah soal yang dikirim

@@ -64,13 +64,11 @@ export async function GET(
       soal: paket.soal.map((s) => ({
         id: s.id,
         pertanyaan: s.pertanyaan,
-        opsi: {
-          A: s.opsiA,
-          B: s.opsiB,
-          C: s.opsiC,
-          D: s.opsiD,
-          E: s.opsiE
-        },
+        opsiA: s.opsiA,
+        opsiB: s.opsiB,
+        opsiC: s.opsiC,
+        opsiD: s.opsiD,
+        opsiE: s.opsiE,
         jawabanBenar: s.jawabanBenar,
         pembahasan: s.pembahasan
       }))
