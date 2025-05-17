@@ -19,7 +19,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Gunakan findUnique untuk query yang lebih efisien
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { role: true }
