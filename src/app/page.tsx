@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -19,12 +19,20 @@ import {
   Star,
   CheckCircle2,
   MessageCircle,
-  Trophy
+  Trophy,
+  Menu,
+  X
 } from 'lucide-react';
 import { ModeToggle } from '@/components/layout/ThemeToggle/theme-toggle';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose
+} from '@/components/ui/sheet';
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -61,6 +69,7 @@ const slideIn = {
 export default function Home() {
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -97,11 +106,13 @@ export default function Home() {
               <img src='/favicon-32x32.png' alt='Logo' className='h-8 w-8' />
               PintuSejawat
             </motion.div>
+
+            {/* Desktop Navigation */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className='flex items-center gap-4'
+              className='hidden items-center gap-4 md:flex'
             >
               <ModeToggle />
               <Link href='/auth/sign-in'>
@@ -111,6 +122,30 @@ export default function Home() {
                 <Button>Daftar</Button>
               </Link>
             </motion.div>
+
+            {/* Mobile Navigation */}
+            <div className='flex items-center gap-2 md:hidden'>
+              <ModeToggle />
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant='ghost' size='icon'>
+                    <Menu className='h-5 w-5' />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side='right' className='w-[300px] sm:w-[400px]'>
+                  <div className='flex flex-col gap-4 py-4'>
+                    <Link href='/auth/sign-in'>
+                      <Button className='w-full' variant='ghost'>
+                        Masuk
+                      </Button>
+                    </Link>
+                    <Link href='/auth/sign-up'>
+                      <Button className='w-full'>Daftar</Button>
+                    </Link>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </nav>
         </motion.header>
 

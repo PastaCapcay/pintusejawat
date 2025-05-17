@@ -21,13 +21,22 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import PageContainer from '@/components/layout/page-container';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Copy, ExternalLink } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '@/components/ui/collapsible';
 import { ChevronDown } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose
+} from '@/components/ui/dialog';
 
 const packages = {
   starter: {
@@ -58,6 +67,8 @@ export default function CheckoutPage() {
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
+  const [showWhatsAppDialog, setShowWhatsAppDialog] = useState(false);
+  const [whatsAppUrl, setWhatsAppUrl] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     whatsapp: '',
@@ -124,6 +135,32 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleWhatsAppOpen = async (url: string) => {
+    setWhatsAppUrl(url);
+
+    try {
+      // Coba buka WhatsApp
+      window.open(url, '_blank');
+
+      // Tampilkan dialog setelah mencoba membuka WhatsApp
+      setTimeout(() => {
+        setShowWhatsAppDialog(true);
+      }, 1000);
+    } catch (error) {
+      console.error('Error opening WhatsApp:', error);
+      setShowWhatsAppDialog(true);
+    }
+  };
+
+  const copyWhatsAppNumber = () => {
+    navigator.clipboard.writeText('62895391166633').then(() => {
+      toast({
+        title: 'Berhasil disalin',
+        description: 'Nomor WhatsApp admin berhasil disalin'
+      });
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.whatsapp || !formData.paymentProof) {
@@ -155,8 +192,8 @@ export default function CheckoutPage() {
         throw new Error(result.error || 'Gagal mengirim bukti pembayaran');
       }
 
-      // Buka WhatsApp di tab baru
-      window.open(result.data.waUrl, '_blank');
+      // Buka WhatsApp dengan handling khusus
+      handleWhatsAppOpen(result.data.waUrl);
     } catch (error) {
       console.error('Error:', error);
       toast({
@@ -300,6 +337,56 @@ export default function CheckoutPage() {
             </Card>
           </form>
         </div>
+
+        {/* Dialog WhatsApp */}
+        <Dialog open={showWhatsAppDialog} onOpenChange={setShowWhatsAppDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Konfirmasi WhatsApp</DialogTitle>
+              <DialogDescription>
+                Jika WhatsApp tidak terbuka secara otomatis, Anda dapat:
+              </DialogDescription>
+            </DialogHeader>
+            <div className='space-y-4 py-4'>
+              <div className='flex items-center justify-between rounded-lg border p-4'>
+                <div className='space-y-0.5'>
+                  <p className='text-sm font-medium'>Nomor WhatsApp Admin</p>
+                  <p className='text-sm text-muted-foreground'>
+                    +62895391166633
+                  </p>
+                </div>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={copyWhatsAppNumber}
+                >
+                  <Copy className='h-4 w-4' />
+                </Button>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <Button
+                  className='w-full'
+                  onClick={() => window.open(whatsAppUrl, '_blank')}
+                >
+                  <ExternalLink className='mr-2 h-4 w-4' />
+                  Buka WhatsApp Web
+                </Button>
+                <Button
+                  variant='outline'
+                  className='w-full'
+                  onClick={() => (window.location.href = whatsAppUrl)}
+                >
+                  Buka di Aplikasi WhatsApp
+                </Button>
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant='secondary'>Tutup</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </PageContainer>
   );

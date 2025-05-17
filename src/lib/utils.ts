@@ -38,3 +38,11 @@ export function convertGDriveLink(rawUrl: string): string {
   }
   return rawUrl;
 }
+
+export function calculateScore(
+  correctAnswers: number,
+  totalQuestions: number
+): number {
+  const score = (correctAnswers / totalQuestions) * 100;
+  return Math.round(score * 100) / 100;
+}

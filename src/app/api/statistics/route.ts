@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { calculateScore } from '@/lib/utils';
+import { headers } from 'next/headers';
 
-// Hitung nilai per history: (jawaban_benar / total_soal) * 100
-const calculateScore = (
-  correctAnswers: number,
-  totalQuestions: number
-): number => {
-  const score = (correctAnswers / totalQuestions) * 100;
-  return Number(score.toFixed(2)); // Format ke 2 angka desimal
-};
+// Cache response for 5 minutes
+export const revalidate = 300;
 
 export async function GET() {
   try {
+    const headersList = headers();
+    const forceRefresh = headersList.get('x-force-refresh') === 'true';
+
     // Mendapatkan data 6 bulan terakhir
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
@@ -46,7 +45,7 @@ export async function GET() {
       if (!monthlyStats.has(month)) {
         monthlyStats.set(month, {
           tryoutSelesai: 0,
-          nilaiPerHistory: [] as number[], // Specify type untuk array
+          nilaiPerHistory: [] as number[],
           jumlahTryout: 0
         });
       }
@@ -61,69 +60,28 @@ export async function GET() {
       // Simpan nilai history ini
       stats.nilaiPerHistory.push(nilai);
       stats.jumlahTryout += 1;
-
-      // Debug info
-      console.log('History:', {
-        month,
-        jawabanBenar: history.score,
-        totalSoal,
-        nilai
-      });
     });
 
-    // Konversi ke format chart dengan perhitungan rata-rata yang benar
-    const chartData = Array.from(monthlyStats.entries())
-      .sort((a, b) => {
-        const months = [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'Mei',
-          'Jun',
-          'Jul',
-          'Agu',
-          'Sep',
-          'Okt',
-          'Nov',
-          'Des'
-        ];
-        return months.indexOf(a[0]) - months.indexOf(b[0]);
+    // Convert Map to array for response
+    const response = Array.from(monthlyStats.entries()).map(
+      ([month, stats]) => ({
+        month,
+        ...stats
       })
-      .map(([bulan, stats]) => {
-        // Hitung rata-rata: jumlah semua nilai dibagi jumlah history
-        const rataRata =
-          stats.nilaiPerHistory.length > 0
-            ? Number(
-                (
-                  stats.nilaiPerHistory.reduce(
-                    (a: number, b: number) => a + b,
-                    0
-                  ) / stats.nilaiPerHistory.length
-                ).toFixed(2)
-              )
-            : 0;
+    );
 
-        // Debug info
-        console.log('Bulan:', bulan, {
-          nilaiPerHistory: stats.nilaiPerHistory,
-          jumlahTryout: stats.jumlahTryout,
-          rataRata
-        });
-
-        return {
-          bulan,
-          tryoutSelesai: stats.tryoutSelesai,
-          rataRata
-        };
-      });
-
-    return NextResponse.json({ data: chartData });
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=59'
+      }
+    });
   } catch (error) {
-    console.error('Error fetching statistics:', error);
+    console.error('[STATISTICS_GET]', error);
     return NextResponse.json(
-      { error: 'Failed to fetch statistics' },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
