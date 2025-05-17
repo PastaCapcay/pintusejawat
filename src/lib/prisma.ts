@@ -17,8 +17,3 @@ export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
-
-// Pastikan koneksi ditutup saat process exit
-process.on('beforeExit', async () => {
-  await prisma.$disconnect();
-});
