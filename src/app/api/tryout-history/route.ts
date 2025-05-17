@@ -37,12 +37,18 @@ export async function GET() {
       select: {
         id: true,
         score: true,
+        timeSpent: true,
         createdAt: true,
         paketSoal: {
           select: {
             id: true,
             judul: true,
-            deskripsi: true
+            deskripsi: true,
+            soal: {
+              select: {
+                id: true
+              }
+            }
           }
         }
       },
@@ -52,13 +58,33 @@ export async function GET() {
       take: 10 // Limit to last 10 records
     });
 
-    return NextResponse.json(histories);
+    // Transform data to reduce payload size
+    const transformedHistories = histories.map((history) => ({
+      id: history.id,
+      score: history.score,
+      timeSpent: history.timeSpent,
+      createdAt: history.createdAt,
+      paketSoal: {
+        id: history.paketSoal.id,
+        judul: history.paketSoal.judul,
+        deskripsi: history.paketSoal.deskripsi,
+        totalSoal: history.paketSoal.soal.length
+      }
+    }));
+
+    return NextResponse.json(transformedHistories, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30'
+      }
+    });
   } catch (error) {
     console.error('[TRYOUT_HISTORY_GET]', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -91,5 +117,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('[TRYOUT_HISTORY_POST]', error);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

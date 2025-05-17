@@ -1,245 +1,44 @@
-May 17, 08:41:44 AM: 71343bcc Duration: 717.36 ms	Memory Usage: 132 MB
-May 17, 08:41:44 AM: 9c3959ad Duration: 731.57 ms	Memory Usage: 135 MB
-May 17, 08:41:44 AM: 9b11f8dc Duration: 736.72 ms	Memory Usage: 128 MB
-May 17, 08:41:45 AM: d912ad11 Duration: 243.07 ms	Memory Usage: 158 MB
-May 17, 08:41:45 AM: 7c058d4f Duration: 330.44 ms	Memory Usage: 158 MB
-May 17, 08:42:06 AM: 13136316 Duration: 143.56 ms	Memory Usage: 158 MB
-May 17, 08:42:06 AM: 8c79d0c0 Duration: 148.53 ms	Memory Usage: 159 MB
-May 17, 08:42:06 AM: 2d798ecc INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:42:07 AM: 6322a0d5 Duration: 71.03 ms	Memory Usage: 158 MB
-May 17, 08:42:08 AM: 2d798ecc INFO   prisma:error 
+May 17, 09:24:16 AM: c63fb4ea Duration: 722.72 ms	Memory Usage: 136 MB
+May 17, 09:24:16 AM: cb8d7a6c Duration: 715.39 ms	Memory Usage: 130 MB
+May 17, 09:24:16 AM: a934cf96 Duration: 776.43 ms	Memory Usage: 130 MB
+May 17, 09:24:18 AM: ac32bc78 Duration: 237.22 ms	Memory Usage: 151 MB
+May 17, 09:24:18 AM: 5a463cec Duration: 298.56 ms	Memory Usage: 158 MB
+May 17, 09:24:22 AM: 947e0128 Duration: 81.49 ms	Memory Usage: 158 MB
+May 17, 09:24:22 AM: 3145b82c Duration: 102.96 ms	Memory Usage: 159 MB
+May 17, 09:24:23 AM: 81d9de99 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
+May 17, 09:24:24 AM: a7fb5c31 Duration: 52.66 ms	Memory Usage: 158 MB
+May 17, 09:24:25 AM: 81d9de99 INFO   GET /api/user/role - Database response: { role: 'USER' }
+May 17, 09:24:25 AM: 81d9de99 Duration: 2105.03 ms	Memory Usage: 163 MB
+May 17, 09:24:26 AM: 921d8cc1 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
+May 17, 09:24:26 AM: 921d8cc1 INFO   GET /api/user/role - Database response: { role: 'USER' }
+May 17, 09:24:26 AM: 921d8cc1 Duration: 231.76 ms	Memory Usage: 163 MB
+May 17, 09:24:27 AM: 6571d5af Duration: 1023.41 ms	Memory Usage: 163 MB
+May 17, 09:24:34 AM: 913883b2 Duration: 215.35 ms	Memory Usage: 164 MB
+May 17, 09:24:50 AM: aa7eaa11 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
+May 17, 09:24:50 AM: aa7eaa11 INFO   GET /api/user/role - Database response: { role: 'USER' }
+May 17, 09:24:50 AM: aa7eaa11 Duration: 441.7 ms	Memory Usage: 164 MB
+May 17, 09:24:53 AM: b380c0cd INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
+May 17, 09:24:53 AM: b380c0cd INFO   GET /api/user/role - Database response: { role: 'USER' }
+May 17, 09:24:53 AM: b380c0cd Duration: 226 ms	Memory Usage: 164 MB
+May 17, 09:24:54 AM: 17a4e2d5 Duration: 739.87 ms	Memory Usage: 164 MB
+May 17, 09:24:55 AM: 2ebe0d72 Duration: 30.42 ms	Memory Usage: 164 MB
+May 17, 09:24:55 AM: 3c4dd855 Duration: 80.47 ms	Memory Usage: 158 MB
+May 17, 09:24:55 AM: 3c3f2fa6 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
+May 17, 09:24:55 AM: 3c3f2fa6 INFO   GET /api/user/role - Database response: { role: 'USER' }
+May 17, 09:24:55 AM: 3c3f2fa6 Duration: 224.96 ms	Memory Usage: 164 MB
+May 17, 09:24:55 AM: f89bcf6c INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
+May 17, 09:24:56 AM: f89bcf6c INFO   GET /api/user/role - Database response: { role: 'USER' }
+May 17, 09:24:56 AM: f89bcf6c Duration: 228.51 ms	Memory Usage: 164 MB
+May 17, 09:24:56 AM: 75c5c020 Duration: 281.69 ms	Memory Usage: 164 MB
+May 17, 09:24:56 AM: 9fdf9df2 Duration: 27.07 ms	Memory Usage: 165 MB
+May 17, 09:24:56 AM: 15120131 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
+May 17, 09:24:58 AM: 40524cea INFO   prisma:error 
 Invalid `prisma.user.findUnique()` invocation:
 
 
 Error occurred during query execution:
 ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s0\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:08 AM: 2d798ecc ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s0\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:08 AM: 2d798ecc Duration: 1880.73 ms	Memory Usage: 159 MB
-May 17, 08:42:08 AM: 669a3037 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:42:09 AM: 669a3037 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s1\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:09 AM: 669a3037 ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s1\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:09 AM: 669a3037 Duration: 235.63 ms	Memory Usage: 159 MB
-May 17, 08:42:10 AM: 2da4adf0 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s2\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:10 AM: 2da4adf0 ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s2\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:10 AM: 2da4adf0 Duration: 748.94 ms	Memory Usage: 161 MB
-May 17, 08:42:46 AM: 68923c2b INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:42:46 AM: 68923c2b INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s3\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:46 AM: 68923c2b ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s3\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:46 AM: 68923c2b Duration: 444.21 ms	Memory Usage: 163 MB
-May 17, 08:42:47 AM: 6ee4e6e2 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:42:47 AM: 6ee4e6e2 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s4\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:47 AM: 6ee4e6e2 ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s4\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:47 AM: 6ee4e6e2 Duration: 224.66 ms	Memory Usage: 163 MB
-May 17, 08:42:47 AM: 88348f65 Duration: 70.88 ms	Memory Usage: 163 MB
-May 17, 08:42:48 AM: 57422ff9 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s5\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:48 AM: 57422ff9 ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s5\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:48 AM: 57422ff9 Duration: 499.06 ms	Memory Usage: 163 MB
-May 17, 08:42:51 AM: d8ac7a8b INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:42:51 AM: d8ac7a8b INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s6\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:51 AM: d8ac7a8b ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s6\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:51 AM: d8ac7a8b Duration: 225.22 ms	Memory Usage: 163 MB
-May 17, 08:42:52 AM: f9b402ef INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:42:52 AM: f9b402ef INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s7\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:52 AM: f9b402ef ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s7\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:52 AM: f9b402ef Duration: 224.49 ms	Memory Usage: 163 MB
-May 17, 08:42:53 AM: 2672d167 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s8\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:42:53 AM: 2672d167 ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s8\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:42:53 AM: 2672d167 Duration: 560 ms	Memory Usage: 163 MB
-May 17, 08:42:53 AM: 9dbf4f4b Duration: 72.31 ms	Memory Usage: 165 MB
-May 17, 08:42:56 AM: 716cefb1 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:42:57 AM: 716cefb1 INFO   GET /api/user/role - Database response: { role: 'USER' }
-May 17, 08:42:57 AM: 716cefb1 Duration: 435.84 ms	Memory Usage: 166 MB
-May 17, 08:42:58 AM: 7bc24682 Duration: 713.7 ms	Memory Usage: 166 MB
-May 17, 08:42:58 AM: 63fc680a Duration: 17.85 ms	Memory Usage: 167 MB
-May 17, 08:42:58 AM: 4e1ebdf7 Duration: 25.8 ms	Memory Usage: 167 MB
-May 17, 08:42:58 AM: 45e10fd5 Duration: 17.04 ms	Memory Usage: 168 MB
-May 17, 08:42:58 AM: 438fb2d3 Duration: 153.43 ms	Memory Usage: 158 MB
-May 17, 08:42:58 AM: 32c1f653 Duration: 356.11 ms	Memory Usage: 154 MB
-May 17, 08:43:01 AM: 623e1ff8 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s0\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:43:01 AM: 623e1ff8 ERROR  Error fetching user profile: PrismaClientUnknownRequestError: 
+May 17, 09:24:58 AM: 40524cea ERROR  Error fetching user profile: PrismaClientUnknownRequestError: 
 Invalid `prisma.user.findUnique()` invocation:
 
 
@@ -257,17 +56,44 @@ ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(Postgr
     at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
   clientVersion: '5.22.0'
 }
-May 17, 08:43:01 AM: 623e1ff8 Duration: 2251.61 ms	Memory Usage: 154 MB
-May 17, 08:43:04 AM: f0c89162 Duration: 131.43 ms	Memory Usage: 154 MB
-May 17, 08:43:16 AM: e300476c INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:43:16 AM: e300476c INFO   prisma:error 
+May 17, 09:24:58 AM: 40524cea Duration: 2704.16 ms	Memory Usage: 164 MB
+May 17, 09:24:58 AM: 15120131 INFO   prisma:error 
 Invalid `prisma.user.findUnique()` invocation:
+
+
+Error occurred during query execution:
+ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s0\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
+May 17, 09:24:58 AM: 15120131 ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
+Invalid `prisma.user.findUnique()` invocation:
+
+
+Error occurred during query execution:
+ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s0\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
+    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
+    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
+    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
+    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
+    at async p (/var/task/.next/server/app/api/user/role/route.js:1:738)
+    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
+    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
+    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
+    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
+  clientVersion: '5.22.0'
+}
+May 17, 09:24:58 AM: 15120131 Duration: 1827.98 ms	Memory Usage: 164 MB
+May 17, 09:24:58 AM: 3cf5a170 Duration: 15.09 ms	Memory Usage: 164 MB
+May 17, 09:25:26 AM: 753c6409 Duration: 15.48 ms	Memory Usage: 164 MB
+May 17, 09:25:26 AM: 27314974 Duration: 26.04 ms	Memory Usage: 164 MB
+May 17, 09:25:27 AM: ae603407 Duration: 104.24 ms	Memory Usage: 164 MB
+May 17, 09:25:28 AM: e3c1775d INFO   prisma:error 
+Invalid `prisma.paketSoal.findMany()` invocation:
 
 
 Error occurred during query execution:
 ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s1\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:43:16 AM: e300476c ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
+May 17, 09:25:28 AM: e3c1775d ERROR  Error fetching paket soal: PrismaClientUnknownRequestError: 
+Invalid `prisma.paketSoal.findMany()` invocation:
 
 
 Error occurred during query execution:
@@ -276,7 +102,7 @@ ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(Postgr
     at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
     at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
     at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
+    at async c (/var/task/.next/server/app/api/paket-soal/route.js:1:1430)
     at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
     at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
     at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
@@ -284,45 +110,41 @@ ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(Postgr
     at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
   clientVersion: '5.22.0'
 }
-May 17, 08:43:16 AM: e300476c Duration: 428.12 ms	Memory Usage: 154 MB
-May 17, 08:43:17 AM: 2a58140e INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
+May 17, 09:25:28 AM: e3c1775d Duration: 852.14 ms	Memory Usage: 164 MB
+May 17, 09:25:41 AM: e0286967 Duration: 15.96 ms	Memory Usage: 164 MB
+May 17, 09:25:42 AM: edd9ab13 Duration: 16.19 ms	Memory Usage: 164 MB
+May 17, 09:25:44 AM: 13bd141e Duration: 2005.38 ms	Memory Usage: 164 MB
+May 17, 09:25:57 AM: 26316856 Duration: 35.65 ms	Memory Usage: 164 MB
+May 17, 09:26:00 AM: 3b2d5a4d Duration: 1541.25 ms	Memory Usage: 164 MB
+May 17, 09:26:07 AM: 03747da3 Duration: 27.13 ms	Memory Usage: 164 MB
+May 17, 09:26:08 AM: 9456dcb8 Duration: 22.01 ms	Memory Usage: 165 MB
+May 17, 09:26:08 AM: 3bac5336 Duration: 15.33 ms	Memory Usage: 165 MB
+May 17, 09:26:09 AM: 03b9f9c1 Duration: 34.94 ms	Memory Usage: 165 MB
+May 17, 09:26:11 AM: 528e27eb Duration: 1243.82 ms	Memory Usage: 165 MB
+May 17, 09:26:19 AM: e413e00c Duration: 10.87 ms	Memory Usage: 165 MB
+May 17, 09:26:20 AM: 962afe6e Duration: 13.83 ms	Memory Usage: 165 MB
+May 17, 09:26:21 AM: d33496b3 Duration: 28.7 ms	Memory Usage: 165 MB
+May 17, 09:26:21 AM: 6b7b475f Duration: 13.38 ms	Memory Usage: 165 MB
+May 17, 09:26:52 AM: fd0887b6 Duration: 118.81 ms	Memory Usage: 165 MB
+May 17, 09:26:53 AM: f5dcd6d3 Duration: 147.12 ms	Memory Usage: 166 MB
+May 17, 09:26:53 AM: 01d8e334 Duration: 35.21 ms	Memory Usage: 166 MB
+May 17, 09:26:54 AM: c070722d INFO   prisma:error 
+Invalid `prisma.tryoutHistory.findMany()` invocation:
 
 
 Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s2\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:43:17 AM: 2a58140e ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
+ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s1\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
+May 17, 09:26:54 AM: c070722d ERROR  [TRYOUT_HISTORY_GET] PrismaClientUnknownRequestError: 
+Invalid `prisma.tryoutHistory.findMany()` invocation:
 
 
 Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s2\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
+ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s1\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
     at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
     at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
     at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
     at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:43:17 AM: 2a58140e Duration: 560.44 ms	Memory Usage: 154 MB
-May 17, 08:43:41 AM: 5f5322dc INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:43:42 AM: 5f5322dc INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s3\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:43:42 AM: 5f5322dc ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s3\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
+    at async d (/var/task/.next/server/app/api/tryout-history/route.js:1:1509)
     at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
     at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
     at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
@@ -330,137 +152,4 @@ ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(Postgr
     at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
   clientVersion: '5.22.0'
 }
-May 17, 08:43:42 AM: 5f5322dc Duration: 436.59 ms	Memory Usage: 154 MB
-May 17, 08:43:43 AM: c0fa48cd INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s4\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:43:43 AM: c0fa48cd ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s4\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:43:43 AM: c0fa48cd Duration: 505.76 ms	Memory Usage: 154 MB
-May 17, 08:43:48 AM: ad289900 Duration: 82.24 ms	Memory Usage: 154 MB
-May 17, 08:43:52 AM: b2d1b8a4 INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:43:52 AM: b2d1b8a4 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s5\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:43:52 AM: b2d1b8a4 ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s5\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:43:52 AM: b2d1b8a4 Duration: 218.24 ms	Memory Usage: 154 MB
-May 17, 08:43:53 AM: fe7711e7 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s6\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:43:53 AM: fe7711e7 ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s6\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:43:53 AM: fe7711e7 Duration: 555.8 ms	Memory Usage: 154 MB
-May 17, 08:44:01 AM: c00d2abe INFO   GET /api/user/role - Request: { userId: '608ad4b8-56e4-49ee-9c24-b0a9a1b2bfab' }
-May 17, 08:44:01 AM: c00d2abe INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s7\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:44:01 AM: c00d2abe ERROR  GET /api/user/role - Error: PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s7\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async u (/var/task/.next/server/app/api/user/role/route.js:1:780)
-    at async /var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:42484
-    at async eI.execute (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:32486)
-    at async eI.handle (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:43737)
-    at async doRender (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1333:42)
-    at async cacheEntry.responseCache.get.routeKind (/var/task/node_modules/.pnpm/next@14.1.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/server/base-server.js:1555:28) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:44:01 AM: c00d2abe Duration: 422.5 ms	Memory Usage: 154 MB
-May 17, 08:44:02 AM: 8ef6110e INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s8\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:44:02 AM: 8ef6110e ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s8\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:44:02 AM: 8ef6110e Duration: 495.07 ms	Memory Usage: 154 MB
-May 17, 08:44:08 AM: 8c76f473 INFO   prisma:error 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s9\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-May 17, 08:44:08 AM: 8c76f473 ERROR  PrismaClientUnknownRequestError: 
-Invalid `prisma.user.findUnique()` invocation:
-
-
-Error occurred during query execution:
-ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s9\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
-    at $n.handleRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:7505)
-    at $n.handleAndLogRequestError (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)
-    at $n.request (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)
-    at async l (/var/task/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)
-    at async g (/var/task/.next/server/chunks/7325.js:1:7977) {
-  clientVersion: '5.22.0'
-}
-May 17, 08:44:08 AM: 8c76f473 Duration: 494.08 ms	Memory Usage: 154 MB
+May 17, 09:26:54 AM: c070722d Duration: 832.66 ms	Memory Usage: 166 MB

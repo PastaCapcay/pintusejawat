@@ -5,17 +5,22 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-// Gunakan global prisma untuk development hot reload
-const prisma =
-  global.prisma ||
-  new PrismaClient({
+const prismaClientSingleton = () => {
+  return new PrismaClient({
     log: ['error'],
-    errorFormat: 'minimal'
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL
+      }
+    }
   });
+};
+
+const prisma = globalThis.prisma ?? prismaClientSingleton();
 
 // Simpan instance di global object saat development
 if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma;
+  globalThis.prisma = prisma;
 }
 
 export { prisma };

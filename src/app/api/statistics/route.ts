@@ -2,12 +2,23 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { calculateScore } from '@/lib/utils';
 import { headers } from 'next/headers';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 // Cache response for 5 minutes
 export const revalidate = 300;
 
 export async function GET() {
   try {
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const headersList = headers();
     const forceRefresh = headersList.get('x-force-refresh') === 'true';
 
@@ -15,17 +26,26 @@ export async function GET() {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    // Mengambil semua tryout history dalam 6 bulan terakhir dengan paket soal dan soal-soalnya
+    // Optimasi query dengan select yang lebih spesifik
     const tryoutHistories = await prisma.tryoutHistory.findMany({
       where: {
+        user: {
+          email: user.email
+        },
         createdAt: {
           gte: sixMonthsAgo
         }
       },
-      include: {
+      select: {
+        createdAt: true,
+        score: true,
         paketSoal: {
-          include: {
-            soal: true // Ambil semua soal untuk mendapatkan jumlah total
+          select: {
+            soal: {
+              select: {
+                id: true
+              }
+            }
           }
         }
       },
@@ -34,10 +54,10 @@ export async function GET() {
       }
     });
 
-    // Mengelompokkan data per bulan
+    // Mengelompokkan data per bulan dengan Map untuk performa lebih baik
     const monthlyStats = new Map();
 
-    tryoutHistories.forEach((history: any) => {
+    for (const history of tryoutHistories) {
       const month = history.createdAt.toLocaleString('id-ID', {
         month: 'short'
       });
@@ -45,28 +65,31 @@ export async function GET() {
       if (!monthlyStats.has(month)) {
         monthlyStats.set(month, {
           tryoutSelesai: 0,
-          nilaiPerHistory: [] as number[],
-          jumlahTryout: 0
+          nilaiPerHistory: [],
+          jumlahTryout: 0,
+          totalNilai: 0
         });
       }
 
       const stats = monthlyStats.get(month);
       stats.tryoutSelesai += 1;
 
-      // Hitung nilai: (jawaban_benar / total_soal) * 100
+      // Hitung nilai
       const totalSoal = history.paketSoal.soal.length;
       const nilai = calculateScore(history.score, totalSoal);
 
-      // Simpan nilai history ini
       stats.nilaiPerHistory.push(nilai);
       stats.jumlahTryout += 1;
-    });
+      stats.totalNilai += nilai;
+    }
 
-    // Convert Map to array for response
+    // Transform data untuk response
     const response = Array.from(monthlyStats.entries()).map(
       ([month, stats]) => ({
         month,
-        ...stats
+        tryoutSelesai: stats.tryoutSelesai,
+        nilaiRataRata: Math.round(stats.totalNilai / stats.tryoutSelesai),
+        jumlahTryout: stats.jumlahTryout
       })
     );
 
