@@ -70,6 +70,7 @@ export default function Home() {
   const router = useRouter();
   const supabase = createClientComponentClient();
   const [isOpen, setIsOpen] = useState(false);
+  const [showPricing, setShowPricing] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -84,6 +85,16 @@ export default function Home() {
 
     checkUser();
   }, [router, supabase.auth]);
+
+  // Helper functions untuk mengontrol visibilitas pricing section
+  const showPricingSection = () => setShowPricing(true);
+  const hidePricingSection = () => setShowPricing(false);
+  const togglePricingSection = () => setShowPricing((prev) => !prev);
+
+  // Dokumentasi cara menggunakan pricing section:
+  // Untuk menampilkan: showPricingSection()
+  // Untuk menyembunyikan: hidePricingSection()
+  // Untuk toggle: togglePricingSection()
 
   // Jika user belum login, tampilkan landing page
   return (
@@ -104,7 +115,7 @@ export default function Home() {
               className='flex items-center gap-2 text-2xl font-bold'
             >
               <img src='/favicon-32x32.png' alt='Logo' className='h-8 w-8' />
-              PintuSejawat
+              IQ Sejawat
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -164,7 +175,7 @@ export default function Home() {
                     variants={slideIn}
                     className='text-5xl font-bold leading-tight'
                   >
-                    Siap UKAI Bareng PintuSejawat?
+                    Siap UKAI Bareng IQ Sejawat?
                   </motion.h1>
                   <motion.p
                     variants={slideIn}
@@ -210,7 +221,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 className='mb-12 text-center text-3xl font-bold'
               >
-                Kenapa Harus PintuSejawat?
+                Kenapa Harus IQ Sejawat?
               </motion.h2>
               <motion.div
                 variants={staggerContainer}
@@ -299,151 +310,163 @@ export default function Home() {
             </div>
           </motion.section>
 
-          {/* Pricing Section */}
-          <section className='px-4 py-16'>
-            <div className='container mx-auto max-w-6xl'>
-              <h2 className='mb-12 text-center text-3xl font-bold'>
-                Pilih Paket Belajarmu
-              </h2>
-              <div className='grid gap-8 md:grid-cols-2 lg:grid-cols-4'>
-                {/* Free Plan */}
-                <Card className='relative bg-card'>
-                  <CardContent className='pt-6'>
-                    <div className='mb-6 text-center'>
-                      <div className='mb-2 text-xl text-emerald-500'>
-                        🟢 FREE
+          {/* Pricing Section - Hidden by default */}
+          {showPricing && (
+            <section className='px-4 py-16'>
+              <div className='container mx-auto max-w-6xl'>
+                <h2 className='mb-12 text-center text-3xl font-bold'>
+                  Pilih Paket Belajarmu
+                </h2>
+                <div className='grid gap-8 md:grid-cols-2 lg:grid-cols-4'>
+                  {/* Free Plan */}
+                  <Card className='relative bg-card'>
+                    <CardContent className='pt-6'>
+                      <div className='mb-6 text-center'>
+                        <div className='mb-2 text-xl text-emerald-500'>
+                          🟢 FREE
+                        </div>
+                        <div className='mt-2 text-3xl font-bold'>Rp 0</div>
+                        <p className='text-muted-foreground'>Selamanya</p>
                       </div>
-                      <div className='mt-2 text-3xl font-bold'>Rp 0</div>
-                      <p className='text-muted-foreground'>Selamanya</p>
-                    </div>
-                    <ul className='space-y-3'>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-green-500' />
-                        <span>1x Tryout Gratis</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-yellow-500' />
-                        <span>Akses Terbatas</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-purple-500' />
-                        <span>Cocok Buat Coba-Coba</span>
-                      </li>
-                    </ul>
-                    <Link href='/auth/sign-up'>
-                      <Button className='mt-6 w-full'>🔓 Mulai Gratis</Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                      <ul className='space-y-3'>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-green-500' />
+                          <span>1x Tryout Gratis</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-yellow-500' />
+                          <span>Akses Terbatas</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-purple-500' />
+                          <span>Cocok Buat Coba-Coba</span>
+                        </li>
+                      </ul>
+                      <Link href='/auth/sign-up'>
+                        <Button className='mt-6 w-full'>🔓 Mulai Gratis</Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
 
-                {/* Starter Plan */}
-                <Card className='relative bg-card'>
-                  <CardContent className='pt-6'>
-                    <div className='mb-6 text-center'>
-                      <div className='mb-2 text-xl text-blue-500'>
-                        🔵 STARTER
+                  {/* Starter Plan */}
+                  <Card className='relative bg-card'>
+                    <CardContent className='pt-6'>
+                      <div className='mb-6 text-center'>
+                        <div className='mb-2 text-xl text-blue-500'>
+                          🔵 STARTER
+                        </div>
+                        <div className='mt-2 text-3xl font-bold'>
+                          Rp 199.000
+                        </div>
+                        <p className='text-muted-foreground'>Akses 3 Bulan</p>
                       </div>
-                      <div className='mt-2 text-3xl font-bold'>Rp 199.000</div>
-                      <p className='text-muted-foreground'>Akses 3 Bulan</p>
-                    </div>
-                    <ul className='space-y-3'>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-green-500' />
-                        <span>Semua Tryout</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-blue-500' />
-                        <span>Fitur Basic</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-blue-500' />
-                        <span>Buat yang baru mulai serius</span>
-                      </li>
-                    </ul>
-                    <Link href='/auth/sign-up'>
-                      <Button className='mt-6 w-full'>🎯 Mulai Belajar</Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                      <ul className='space-y-3'>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-green-500' />
+                          <span>Semua Tryout</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-blue-500' />
+                          <span>Fitur Basic</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-blue-500' />
+                          <span>Buat yang baru mulai serius</span>
+                        </li>
+                      </ul>
+                      <Link href='/auth/sign-up'>
+                        <Button className='mt-6 w-full'>
+                          🎯 Mulai Belajar
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
 
-                {/* Pro Plan */}
-                <Card className='relative border-primary bg-card'>
-                  <div className='absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-sm font-medium text-primary-foreground'>
-                    Popular
-                  </div>
-                  <CardContent className='pt-6'>
-                    <div className='mb-6 text-center'>
-                      <div className='mb-2 text-xl text-orange-500'>🟠 PRO</div>
-                      <div className='mt-2 text-3xl font-bold'>Rp 349.000</div>
-                      <p className='text-muted-foreground'>Akses 3 Bulan</p>
+                  {/* Pro Plan */}
+                  <Card className='relative border-primary bg-card'>
+                    <div className='absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-sm font-medium text-primary-foreground'>
+                      Popular
                     </div>
-                    <ul className='space-y-3'>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-green-500' />
-                        <span>Semua Tryout</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-green-500' />
-                        <span>Latihan Soal</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-green-500' />
-                        <span>Modul Belajar Lengkap</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-orange-500' />
-                        <span>Belajar Lebih Terarah</span>
-                      </li>
-                    </ul>
-                    <Link href='/auth/sign-up'>
-                      <Button className='mt-6 w-full'>📚 Pilih PRO</Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-
-                {/* Pro Plus Plan */}
-                <Card className='relative border-red-500 bg-card'>
-                  <div className='absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-4 py-1 text-sm font-medium text-white'>
-                    🔥 PALING LENGKAP
-                  </div>
-                  <CardContent className='pt-6'>
-                    <div className='mb-6 text-center'>
-                      <div className='mb-2 text-xl text-red-500'>
-                        🔴 PRO PLUS
+                    <CardContent className='pt-6'>
+                      <div className='mb-6 text-center'>
+                        <div className='mb-2 text-xl text-orange-500'>
+                          🟠 PRO
+                        </div>
+                        <div className='mt-2 text-3xl font-bold'>
+                          Rp 349.000
+                        </div>
+                        <p className='text-muted-foreground'>Akses 3 Bulan</p>
                       </div>
-                      <div className='mt-2 text-3xl font-bold'>Rp 599.000</div>
-                      <p className='text-muted-foreground'>
-                        Akses Sampai Lulus
-                      </p>
+                      <ul className='space-y-3'>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-green-500' />
+                          <span>Semua Tryout</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-green-500' />
+                          <span>Latihan Soal</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-green-500' />
+                          <span>Modul Belajar Lengkap</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-orange-500' />
+                          <span>Belajar Lebih Terarah</span>
+                        </li>
+                      </ul>
+                      <Link href='/auth/sign-up'>
+                        <Button className='mt-6 w-full'>📚 Pilih PRO</Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+
+                  {/* Pro Plus Plan */}
+                  <Card className='relative border-red-500 bg-card'>
+                    <div className='absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-4 py-1 text-sm font-medium text-white'>
+                      🔥 PALING LENGKAP
                     </div>
-                    <ul className='space-y-3'>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-green-500' />
-                        <span>Semua Fitur PRO</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-green-500' />
-                        <span>24 Jam Tanya Jawab dengan Mentor</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-red-500' />
-                        <span>Bimbingan Intensif + Dukungan Full</span>
-                      </li>
-                      <li className='flex items-center gap-2'>
-                        <CheckCircle2 className='h-5 w-5 text-red-500' />
-                        <span>Paket Pasti Lulus</span>
-                      </li>
-                    </ul>
-                    <Link href='/auth/sign-up'>
-                      <Button className='mt-6 w-full bg-red-500 hover:bg-red-600'>
-                        🏁 Pilih PRO PLUS
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                    <CardContent className='pt-6'>
+                      <div className='mb-6 text-center'>
+                        <div className='mb-2 text-xl text-red-500'>
+                          🔴 PRO PLUS
+                        </div>
+                        <div className='mt-2 text-3xl font-bold'>
+                          Rp 599.000
+                        </div>
+                        <p className='text-muted-foreground'>
+                          Akses Sampai Lulus
+                        </p>
+                      </div>
+                      <ul className='space-y-3'>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-green-500' />
+                          <span>Semua Fitur PRO</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-green-500' />
+                          <span>24 Jam Tanya Jawab dengan Mentor</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-red-500' />
+                          <span>Bimbingan Intensif + Dukungan Full</span>
+                        </li>
+                        <li className='flex items-center gap-2'>
+                          <CheckCircle2 className='h-5 w-5 text-red-500' />
+                          <span>Paket Pasti Lulus</span>
+                        </li>
+                      </ul>
+                      <Link href='/auth/sign-up'>
+                        <Button className='mt-6 w-full bg-red-500 hover:bg-red-600'>
+                          🏁 Pilih PRO PLUS
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* Testimonials Section */}
           <section className='bg-muted/50 px-4 py-16'>
@@ -464,8 +487,8 @@ export default function Home() {
                       ))}
                     </div>
                     <p className='mb-4 text-card-foreground'>
-                      "Berkat PintuSejawat, saya berhasil lulus UKAI di
-                      kesempatan pertama!"
+                      "Berkat IQ Sejawat, saya berhasil lulus UKAI di kesempatan
+                      pertama!"
                     </p>
                     <div className='flex items-center gap-3'>
                       <img
@@ -598,7 +621,7 @@ export default function Home() {
           <div className='container mx-auto max-w-6xl'>
             <div className='grid gap-8 md:grid-cols-4'>
               <div>
-                <h3 className='mb-4 text-lg font-bold'>PintuSejawat</h3>
+                <h3 className='mb-4 text-lg font-bold'>IQ Sejawat</h3>
                 <p className='text-slate-400'>
                   Platform persiapan UKAI terpercaya dengan ribuan alumni yang
                   sukses.
@@ -659,13 +682,22 @@ export default function Home() {
                 <ul className='space-y-2 text-slate-400'>
                   <li>Email: info@pintusejawat.com</li>
                   <li>WhatsApp: +62 858-4280-0018</li>
-                  <li>Instagram: @pintusejawat</li>
+                  <li>
+                    Instagram:{' '}
+                    <a
+                      href='https://www.instagram.com/iq.sejawat/'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      @iq.sejawat
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
             <div className='mt-8 border-t border-slate-800 pt-8 text-center text-slate-400'>
               <p>
-                &copy; {new Date().getFullYear()} PintuSejawat. All rights
+                &copy; {new Date().getFullYear()} IQ Sejawat. All rights
                 reserved.
               </p>
             </div>

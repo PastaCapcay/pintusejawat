@@ -112,7 +112,7 @@ export function Overview() {
         <CardContent>
           <div className='mb-4 text-center text-base text-muted-foreground md:text-left md:text-lg'>
             Hai <span className='font-semibold text-primary'>{userName}</span>,
-            selamat datang di PintuSejawat!
+            selamat datang di IQ Sejawat!
           </div>
           <div className='space-y-2 text-muted-foreground'>
             <p className='text-sm md:text-base'>

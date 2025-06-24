@@ -32,10 +32,10 @@ export function Overview() {
         <CardContent>
           <div className='mb-4 text-lg text-muted-foreground'>
             Hai <span className='font-semibold text-primary'>{userName}</span>,
-            selamat datang di Dashboard Admin PintuSejawat!
+            selamat datang di Dashboard Admin IQ Sejawat!
           </div>
           <div className='space-y-2 text-muted-foreground'>
-            <p>Kelola platform PintuSejawat dengan fitur-fitur berikut:</p>
+            <p>Kelola platform IQ Sejawat dengan fitur-fitur berikut:</p>
             <ul className='ml-4 list-inside list-disc space-y-1'>
               <li>Manajemen bank soal dan tryout</li>
               <li>Pengelolaan materi pembelajaran</li>

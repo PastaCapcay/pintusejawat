@@ -129,7 +129,7 @@ export default function SignUpPage() {
         <div className='absolute inset-0 bg-primary' />
         <div className='relative z-20 flex items-center text-lg font-medium'>
           <img src='/favicon-32x32.png' alt='Logo' className='mr-2 h-8 w-8' />
-          Pintu Sejawat
+          IQ Sejawat
         </div>
         <div className='relative z-20 mt-auto'>
           <blockquote className='space-y-2'>

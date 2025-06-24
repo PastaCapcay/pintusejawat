@@ -50,13 +50,25 @@ export function UploadPaketDialog({
       [
         'Contoh Paket Soal',
         'Deskripsi paket soal (opsional)',
-        'Contoh pertanyaan 1?',
+        'Pertanyaan soal pertama?',
         'Opsi A',
         'Opsi B',
         'Opsi C',
         'Opsi D',
         'Opsi E',
         'A',
+        'Pembahasan jawaban (opsional)'
+      ],
+      [
+        '', // Judul dikosongkan karena menggunakan judul dari baris 2
+        '', // Deskripsi dikosongkan karena menggunakan deskripsi dari baris 2
+        'Pertanyaan soal kedua?',
+        'Opsi A',
+        'Opsi B',
+        'Opsi C',
+        'Opsi D',
+        'Opsi E',
+        'B',
         'Pembahasan jawaban (opsional)'
       ]
     ];
@@ -126,7 +138,11 @@ export function UploadPaketDialog({
           <DialogHeader>
             <DialogTitle>Upload Paket Soal</DialogTitle>
             <DialogDescription>
-              Upload paket soal menggunakan file XLSX.
+              Upload paket soal menggunakan file XLSX. Format file:
+              <br />- Baris 1: Header kolom
+              <br />- Baris 2: Data soal pertama + judul dan deskripsi paket
+              <br />- Baris 3+: Data soal-soal berikutnya (judul dan deskripsi
+              dikosongkan)
             </DialogDescription>
           </DialogHeader>
 

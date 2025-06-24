@@ -36,8 +36,9 @@ export async function GET() {
       );
     }
 
-    // Ambil semua soal dari database
+    // Ambil semua soal dari database yang hanya milik paket TRYOUT_FREE
     const allSoals = await prisma.soal.findMany({
+      where: { paketSoalId: TRYOUT_FREE },
       select: {
         id: true,
         pertanyaan: true,
@@ -63,8 +64,8 @@ export async function GET() {
     // Acak urutan soal
     const shuffledSoals = allSoals.sort(() => Math.random() - 0.5);
 
-    // Ambil 10 soal random
-    const selectedSoals = shuffledSoals.slice(0, FREE_TRYOUT_QUESTIONS);
+    // Ambil semua soal (tanpa pembatasan 10 soal)
+    const selectedSoals = shuffledSoals;
 
     // Hapus jawabanBenar dari response untuk keamanan
     const sanitizedSoals = selectedSoals.map(

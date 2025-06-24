@@ -65,7 +65,7 @@ import { useSidebar } from '@/components/ui/sidebar';
 import { useToast } from '@/components/ui/use-toast';
 
 export const company = {
-  name: 'Pintu Sejawat',
+  name: 'IQ Sejawat',
   logo: Building2,
   plan: 'User Dashboard'
 };

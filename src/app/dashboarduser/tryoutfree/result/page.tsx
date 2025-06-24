@@ -56,7 +56,7 @@ export default function TryoutResultPage() {
               <div className='space-y-4 text-left'>
                 <div className='border-t pt-4'>
                   <h3 className='mb-2 font-semibold'>Catatan:</h3>
-                  <ul className='text-muted-foreground list-inside list-disc space-y-2'>
+                  <ul className='list-inside list-disc space-y-2 text-muted-foreground'>
                     <li>
                       Skor di atas merupakan persentase jawaban benar dari total{' '}
                       {totalQuestions} soal
@@ -79,7 +79,7 @@ export default function TryoutResultPage() {
                   className='w-full'
                   onClick={() =>
                     window.open(
-                      'https://www.instagram.com/pintusejawat?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
+                      'https://www.instagram.com/iq.sejawat/',
                       '_blank'
                     )
                   }

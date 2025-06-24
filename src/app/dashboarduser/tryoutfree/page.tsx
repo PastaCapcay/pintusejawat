@@ -34,18 +34,15 @@ export default function TryoutFreePage() {
 
     // Tampilkan toast
     toast({
-      title: 'Membuka Instagram Pintu Sejawat',
+      title: 'Membuka Instagram IQ Sejawat',
       description:
-        'Anda akan diarahkan ke Instagram @pintusejawat. Silakan follow untuk mendapatkan update terbaru!',
+        'Anda akan diarahkan ke Instagram @iq.sejawat. Silakan follow untuk mendapatkan update terbaru!',
       duration: 5000
     });
 
     // Tunggu sebentar sebelum buka Instagram
     setTimeout(() => {
-      window.open(
-        'https://www.instagram.com/pintusejawat?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
-        '_blank'
-      );
+      window.open('https://www.instagram.com/iq.sejawat/', '_blank');
     }, 1000);
 
     // Tunggu 5 detik sebelum redirect ke halaman tryout

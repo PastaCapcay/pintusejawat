@@ -61,7 +61,7 @@ interface NavigationItem {
 }
 
 export const company = {
-  name: 'Pintu Sejawat',
+  name: 'IQ Sejawat',
   logo: Building2,
   plan: 'Admin Dashboard'
 };
