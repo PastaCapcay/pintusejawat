@@ -22,7 +22,7 @@ import {
   CollapsibleContent
 } from '@/components/ui/collapsible';
 import { IconChevronRight } from '@tabler/icons-react';
-import type { LucideIcon } from 'lucide-react';
+
 import {
   UserCircle,
   LogOut,
@@ -46,16 +46,20 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/use-toast';
 
+type LucideIconType = React.ComponentType<
+  React.ComponentProps<typeof UserCircle>
+>;
+
 interface NavigationItem {
   title: string;
   href: string;
-  icon: LucideIcon;
+  icon: LucideIconType;
   color?: string;
   isActive?: boolean;
   items?: {
     title: string;
     href: string;
-    icon: LucideIcon;
+    icon: LucideIconType;
     shortcut?: string[];
   }[];
 }
