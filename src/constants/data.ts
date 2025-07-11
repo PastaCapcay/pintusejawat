@@ -9,22 +9,25 @@ import {
   GraduationCap,
   History,
   Trophy,
-  CreditCard,
-  LucideIcon
+  CreditCard
 } from 'lucide-react';
 import { Grade } from '@prisma/client';
+
+type LucideIconType = React.ComponentType<
+  React.ComponentProps<typeof UserCircle>
+>;
 
 interface NavigationSubItem {
   title: string;
   href: string;
-  icon: LucideIcon;
+  icon: LucideIconType;
   shortcut?: string[];
 }
 
 interface NavigationItem {
   title: string;
   href: string;
-  icon: LucideIcon;
+  icon: LucideIconType;
   color?: string;
   isActive?: boolean;
   shortcut?: string[];

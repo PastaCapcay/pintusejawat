@@ -57,7 +57,10 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import { useEffect, useState } from 'react';
-import { LucideIcon } from 'lucide-react';
+import { UserCircle } from 'lucide-react';
+type LucideIconType = React.ComponentType<
+  React.ComponentProps<typeof UserCircle>
+>;
 import { Grade } from '@prisma/client';
 import { Building2, LogOut, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';

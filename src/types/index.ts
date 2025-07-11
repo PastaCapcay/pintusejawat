@@ -1,5 +1,8 @@
 import { Icons } from '@/components/icons';
-import { LucideIcon } from 'lucide-react';
+import { UserCircle } from 'lucide-react';
+type LucideIconType = React.ComponentType<
+  React.ComponentProps<typeof UserCircle>
+>;
 
 export interface NavItem {
   title: string;
@@ -7,7 +10,7 @@ export interface NavItem {
   disabled?: boolean;
   external?: boolean;
   shortcut?: [string, string];
-  icon?: keyof typeof Icons | LucideIcon;
+  icon?: keyof typeof Icons | LucideIconType;
   label?: string;
   description?: string;
   isActive?: boolean;
