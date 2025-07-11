@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -87,7 +88,17 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Memuat data...
+                  <div className='space-y-2'>
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className='flex items-center space-x-4 p-2'>
+                        <Skeleton className='h-8 w-8 rounded-full' />
+                        <Skeleton className='h-4 w-1/4' />
+                        <Skeleton className='h-4 w-1/4' />
+                        <Skeleton className='h-4 w-1/4' />
+                        <Skeleton className='h-4 w-1/4' />
+                      </div>
+                    ))}
+                  </div>
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (

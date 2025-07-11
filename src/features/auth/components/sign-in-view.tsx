@@ -6,8 +6,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import {
   Card,
@@ -28,6 +28,8 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { getDeviceId } from '@/lib/device-id';
+import { UserAuthForm } from './user-auth-form';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -45,197 +47,95 @@ const signInFormSchema = z.object({
 
 type SignInFormValues = z.infer<typeof signInFormSchema>;
 
-export default function SignInViewPage() {
+export function SignInView() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
-  const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<SignInFormValues>({
-    resolver: zodResolver(signInFormSchema),
-    defaultValues: {
-      email: '',
-      password: ''
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam === 'no_device_id') {
+      setError('Sesi tidak valid. Silakan login ulang.');
     }
-  });
+  }, [searchParams]);
 
-  async function onSubmit(data: SignInFormValues) {
-    try {
-      setIsLoading(true);
-      console.log('Starting login process...');
+  const onSignIn = useCallback(
+    async (userId: string) => {
+      try {
+        const deviceId = getDeviceId();
 
-      // Sign out dari sesi yang ada (jika ada)
-      await supabase.auth.signOut();
-      console.log('Cleared existing session');
-
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password
-      });
-
-      if (error) {
-        console.error('Login error:', error);
-        toast.error(error.message);
-        return;
-      }
-
-      if (authData.user) {
-        console.log('Login successful, getting new session...');
-
-        // Dapatkan sesi baru
-        const {
-          data: { session }
-        } = await supabase.auth.getSession();
-        console.log('Got new session:', {
-          userId: session?.user?.id,
-          hasAccessToken: !!session?.access_token
-        });
-
-        if (!session?.access_token) {
-          throw new Error('No access token in new session');
-        }
-
-        // Simpan sesi aktif
-        console.log('Saving session...');
-        const response = await fetch('/api/auth/session', {
+        const response = await fetch('/api/user-session', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          body: JSON.stringify({
+            userId,
+            deviceId
+          })
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Failed to save session:', errorData);
-          throw new Error(errorData.error || 'Failed to save session');
+          setError(data.error || 'Gagal login. Silakan coba lagi.');
+          return;
         }
 
-        console.log('Session saved successfully');
+        // Cek role untuk redirect
+        const roleRes = await fetch(`/api/user/role?userId=${userId}`);
+        const roleData = await roleRes.json();
 
-        // Ambil role user dari database
-        console.log('Getting user role...');
-        const roleResponse = await fetch(
-          `/api/user/role?userId=${authData.user.id}`,
-          {
-            method: 'GET'
-          }
-        );
-
-        if (!roleResponse.ok) {
-          const errorData = await roleResponse.json();
-          console.error('Failed to get user role:', errorData);
-          throw new Error(errorData.error || 'Failed to get user role');
-        }
-
-        const { role } = await roleResponse.json();
-        console.log('Got user role:', role);
-
-        // Redirect berdasarkan role
-        if (role === 'ADMIN') {
+        if (roleData.role === 'ADMIN') {
           router.push('/dashboard');
         } else {
           router.push('/dashboarduser');
         }
+      } catch (error) {
+        console.error('Error signing in:', error);
+        setError('Terjadi kesalahan. Silakan coba lagi.');
       }
-    } catch (error) {
-      console.error('Error during login:', error);
-      toast.error(
-        error instanceof Error ? error.message : 'Something went wrong'
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }
+    },
+    [router]
+  );
 
   return (
-    <div className='flex h-full items-center justify-center p-4 lg:p-8'>
-      <div className='flex w-full max-w-md flex-col items-center justify-center space-y-6'>
-        <div className='w-full'>
-          <Link
-            href='/'
-            className={cn(
-              buttonVariants({ variant: 'ghost' }),
-              'flex items-center gap-2'
-            )}
-          >
-            <ArrowLeft className='h-4 w-4' />
-            Kembali ke Beranda
-          </Link>
+    <div className='container relative grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0'>
+      <div className='relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex'>
+        <div className='absolute inset-0 bg-zinc-900' />
+        <div className='relative z-20 flex items-center text-lg font-medium'>
+          <img src='/hero.svg' alt='Logo' className='mr-2 h-8 w-8' />
+          Pintu Sejawat
         </div>
-
-        <Card className='w-full'>
-          <CardHeader>
-            <CardTitle>Login</CardTitle>
-            <CardDescription>
-              Masuk ke akun Anda untuk mengakses semua fitur.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className='space-y-4'
-              >
-                <FormField
-                  control={form.control}
-                  name='email'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder='Masukkan email Anda'
-                          type='email'
-                          {...field}
-                          disabled={isLoading}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name='password'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder='Masukkan password'
-                          type='password'
-                          {...field}
-                          disabled={isLoading}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type='submit' className='w-full' disabled={isLoading}>
-                  {isLoading ? 'Loading...' : 'Login'}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-
-        <p className='px-8 text-center text-sm text-muted-foreground'>
-          By clicking continue, you agree to our{' '}
-          <Link
-            href='/terms'
-            className='underline underline-offset-4 hover:text-primary'
-          >
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link
-            href='/privacy'
-            className='underline underline-offset-4 hover:text-primary'
-          >
-            Privacy Policy
-          </Link>
-          .
-        </p>
+        <div className='relative z-20 mt-auto'>
+          <blockquote className='space-y-2'>
+            <p className='text-lg'>
+              &ldquo;Platform belajar online untuk persiapan UKMPPD yang
+              berkualitas dan terpercaya.&rdquo;
+            </p>
+          </blockquote>
+        </div>
+      </div>
+      <div className='lg:p-8'>
+        <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
+          <div className='flex flex-col space-y-2 text-center'>
+            <h1 className='text-2xl font-semibold tracking-tight'>
+              Login ke akun anda
+            </h1>
+            <p className='text-sm text-muted-foreground'>
+              Masukkan email anda untuk login
+            </p>
+          </div>
+          {error && (
+            <div
+              className='relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700'
+              role='alert'
+            >
+              <span className='block sm:inline'>{error}</span>
+            </div>
+          )}
+          <UserAuthForm onSignIn={onSignIn} />
+        </div>
       </div>
     </div>
   );

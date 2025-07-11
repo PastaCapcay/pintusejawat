@@ -21,7 +21,8 @@ import {
   MessageCircle,
   Trophy,
   Menu,
-  X
+  X,
+  UserCircle2
 } from 'lucide-react';
 import { ModeToggle } from '@/components/layout/ThemeToggle/theme-toggle';
 import Image from 'next/image';
@@ -115,7 +116,6 @@ export default function Home() {
               className='flex items-center gap-2 text-2xl font-bold'
             >
               <img src='/favicon-32x32.png' alt='Logo' className='h-8 w-8' />
-              IQ Sejawat
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -130,7 +130,7 @@ export default function Home() {
                 <Button variant='ghost'>Masuk</Button>
               </Link>
               <Link href='/auth/sign-up'>
-                <Button>Daftar</Button>
+                <Button>Coba Gratis</Button>
               </Link>
             </motion.div>
 
@@ -151,7 +151,7 @@ export default function Home() {
                       </Button>
                     </Link>
                     <Link href='/auth/sign-up'>
-                      <Button className='w-full'>Daftar</Button>
+                      <Button className='w-full'>Coba Gratis</Button>
                     </Link>
                   </div>
                 </SheetContent>
@@ -164,30 +164,33 @@ export default function Home() {
           {/* Hero Section */}
           <section className='flex min-h-[calc(100vh-5rem)] items-center px-4'>
             <div className='container mx-auto max-w-6xl py-16'>
-              <div className='grid items-center gap-8 lg:grid-cols-2'>
+              <div className='grid items-center gap-12 lg:grid-cols-2'>
                 <motion.div
-                  variants={fadeIn}
+                  variants={staggerContainer}
                   initial='initial'
                   animate='animate'
-                  className='space-y-6'
+                  className='space-y-6 text-center lg:text-left'
                 >
                   <motion.h1
                     variants={slideIn}
-                    className='text-5xl font-bold leading-tight'
+                    className='text-4xl font-bold leading-tight md:text-5xl lg:text-6xl'
                   >
-                    Siap UKAI Bareng IQ Sejawat?
+                    Platform Belajar UKAI Terlengkap
                   </motion.h1>
                   <motion.p
                     variants={slideIn}
-                    className='text-xl text-muted-foreground'
+                    className='text-lg text-muted-foreground md:text-xl'
                   >
-                    Platform all-in-one buat belajar, tryout, dan mentoring UKAI
-                    secara online.
+                    Raih kelulusan UKAI dengan ribuan soal, materi terstruktur,
+                    dan analisis performa untuk kesuksesan karir apoteker Anda.
                   </motion.p>
-                  <motion.div variants={slideIn} className='flex gap-4'>
+                  <motion.div variants={slideIn}>
                     <Link href='/auth/sign-up'>
-                      <Button size='lg' className='px-8 text-lg'>
-                        Mulai Sekarang
+                      <Button
+                        size='lg'
+                        className='h-14 transform px-8 text-lg font-bold transition duration-300 ease-in-out hover:scale-105'
+                      >
+                        Coba Tryout Gratis Sekarang
                       </Button>
                     </Link>
                   </motion.div>
@@ -211,8 +214,85 @@ export default function Home() {
             </div>
           </section>
 
+          {/* Testimonials Section */}
+          <section className='bg-muted px-4 py-16'>
+            <div className='container mx-auto max-w-6xl'>
+              <motion.h2
+                variants={fadeIn}
+                initial='initial'
+                whileInView='animate'
+                viewport={{ once: true }}
+                className='mb-12 text-center text-3xl font-bold'
+              >
+                Apa Kata Mereka Tentang IQ Sejawat?
+              </motion.h2>
+              <motion.div
+                variants={staggerContainer}
+                initial='initial'
+                whileInView='animate'
+                viewport={{ once: true }}
+                className='grid gap-8 md:grid-cols-2 lg:grid-cols-3'
+              >
+                {[
+                  {
+                    name: 'Apoteker Sarah, S.Farm.',
+                    title: 'Alumni Bimbingan IQ Sejawat',
+                    quote:
+                      'Tryout di IQ Sejawat sangat mirip dengan soal UKAI asli. Analisis performanya membantu saya fokus pada materi yang lemah. Lulus dengan nilai memuaskan!',
+                    image:
+                      'https://plus.unsplash.com/premium_photo-1664475543697-229156438e1e?q=80&w=686&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                  },
+                  {
+                    name: 'Budi Hartono, S.Farm., Apt.',
+                    title: 'Apoteker Profesional',
+                    quote:
+                      'Materi yang disajikan sangat lengkap dan terstruktur. Fitur mentoring 24/7 benar-benar jadi penyelamat saat mentok belajar mandiri. Highly recommended!',
+                    image:
+                      'https://images.unsplash.com/photo-1646579219100-06ce3ae6302b?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                  },
+                  {
+                    name: 'Citra Lestari',
+                    title: 'Mahasiswa Farmasi',
+                    quote:
+                      'Sebagai mahasiswa, saya merasa lebih siap menghadapi UKAI berkat platform ini. Soal-soalnya menantang dan pembahasannya mudah dimengerti. Terima kasih IQ Sejawat!',
+                    image:
+                      'https://images.unsplash.com/photo-1634451784126-b9f7282edb1b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                  }
+                ].map((testimonial, index) => (
+                  <motion.div
+                    key={index}
+                    variants={fadeIn}
+                    custom={index}
+                    className='h-full'
+                  >
+                    <Card className='flex h-full flex-col justify-between bg-card'>
+                      <CardContent className='pt-6'>
+                        <blockquote className='border-l-4 border-primary pl-4 italic text-muted-foreground'>
+                          {testimonial.quote}
+                        </blockquote>
+                      </CardContent>
+                      <div className='flex items-center gap-4 p-6 pt-0'>
+                        <img
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className='h-12 w-12 rounded-full object-cover'
+                        />
+                        <div>
+                          <p className='font-semibold'>{testimonial.name}</p>
+                          <p className='text-sm text-muted-foreground'>
+                            {testimonial.title}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+
           {/* Features Section */}
-          <section className='bg-muted/50 px-4 py-16'>
+          <section className='bg-background px-4 py-16'>
             <div className='container mx-auto max-w-6xl'>
               <motion.h2
                 variants={fadeIn}
@@ -281,34 +361,36 @@ export default function Home() {
             </div>
           </section>
 
-          {/* CTA Section */}
-          <motion.section
-            variants={fadeIn}
-            initial='hidden'
-            whileInView='visible'
-            viewport={{ once: true }}
-            className='bg-primary px-4 py-16 text-primary-foreground'
-          >
-            <div className='container mx-auto max-w-3xl text-center'>
-              <motion.h2 variants={slideIn} className='mb-4 text-3xl font-bold'>
-                Siap Untuk Mulai?
-              </motion.h2>
-              <motion.p variants={slideIn} className='mb-8 text-lg'>
-                Raih impianmu menjadi apoteker yang kompeten!
-              </motion.p>
-              <motion.div variants={slideIn}>
-                <Link href='/auth/sign-up'>
-                  <Button
-                    size='lg'
-                    variant='secondary'
-                    className='px-8 text-lg'
-                  >
-                    Daftar Sekarang
-                  </Button>
-                </Link>
-              </motion.div>
-            </div>
-          </motion.section>
+          {/* Call to Action */}
+          <section className='bg-primary py-20 text-center text-primary-foreground'>
+            <motion.h2
+              variants={fadeIn}
+              className='mb-4 text-3xl font-bold md:text-4xl'
+            >
+              Siap Untuk Mulai?
+            </motion.h2>
+            <motion.p
+              variants={fadeIn}
+              className='mb-8 text-lg text-primary-foreground/80'
+            >
+              Raih impianmu menjadi apoteker yang kompeten!
+            </motion.p>
+            <motion.div
+              variants={fadeIn}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link href='/auth/sign-up'>
+                <Button
+                  size='lg'
+                  variant='secondary'
+                  className='h-12 px-8 text-lg font-bold'
+                >
+                  Tryout Gratis
+                </Button>
+              </Link>
+            </motion.div>
+          </section>
 
           {/* Pricing Section - Hidden by default */}
           {showPricing && (
@@ -323,7 +405,7 @@ export default function Home() {
                     <CardContent className='pt-6'>
                       <div className='mb-6 text-center'>
                         <div className='mb-2 text-xl text-emerald-500'>
-                          🟢 FREE
+                          FREE
                         </div>
                         <div className='mt-2 text-3xl font-bold'>Rp 0</div>
                         <p className='text-muted-foreground'>Selamanya</p>
@@ -343,7 +425,7 @@ export default function Home() {
                         </li>
                       </ul>
                       <Link href='/auth/sign-up'>
-                        <Button className='mt-6 w-full'>🔓 Mulai Gratis</Button>
+                        <Button className='mt-6 w-full'>Mulai Gratis</Button>
                       </Link>
                     </CardContent>
                   </Card>
@@ -353,7 +435,7 @@ export default function Home() {
                     <CardContent className='pt-6'>
                       <div className='mb-6 text-center'>
                         <div className='mb-2 text-xl text-blue-500'>
-                          🔵 STARTER
+                          STARTER
                         </div>
                         <div className='mt-2 text-3xl font-bold'>
                           Rp 199.000
@@ -375,9 +457,7 @@ export default function Home() {
                         </li>
                       </ul>
                       <Link href='/auth/sign-up'>
-                        <Button className='mt-6 w-full'>
-                          🎯 Mulai Belajar
-                        </Button>
+                        <Button className='mt-6 w-full'>Mulai Belajar</Button>
                       </Link>
                     </CardContent>
                   </Card>
@@ -389,9 +469,7 @@ export default function Home() {
                     </div>
                     <CardContent className='pt-6'>
                       <div className='mb-6 text-center'>
-                        <div className='mb-2 text-xl text-orange-500'>
-                          🟠 PRO
-                        </div>
+                        <div className='mb-2 text-xl text-orange-500'>PRO</div>
                         <div className='mt-2 text-3xl font-bold'>
                           Rp 349.000
                         </div>
@@ -416,7 +494,7 @@ export default function Home() {
                         </li>
                       </ul>
                       <Link href='/auth/sign-up'>
-                        <Button className='mt-6 w-full'>📚 Pilih PRO</Button>
+                        <Button className='mt-6 w-full'>Pilih PRO</Button>
                       </Link>
                     </CardContent>
                   </Card>
@@ -424,12 +502,12 @@ export default function Home() {
                   {/* Pro Plus Plan */}
                   <Card className='relative border-red-500 bg-card'>
                     <div className='absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-4 py-1 text-sm font-medium text-white'>
-                      🔥 PALING LENGKAP
+                      PALING LENGKAP
                     </div>
                     <CardContent className='pt-6'>
                       <div className='mb-6 text-center'>
                         <div className='mb-2 text-xl text-red-500'>
-                          🔴 PRO PLUS
+                          PRO PLUS
                         </div>
                         <div className='mt-2 text-3xl font-bold'>
                           Rp 599.000
@@ -458,7 +536,7 @@ export default function Home() {
                       </ul>
                       <Link href='/auth/sign-up'>
                         <Button className='mt-6 w-full bg-red-500 hover:bg-red-600'>
-                          🏁 Pilih PRO PLUS
+                          Pilih PRO PLUS
                         </Button>
                       </Link>
                     </CardContent>
@@ -468,108 +546,8 @@ export default function Home() {
             </section>
           )}
 
-          {/* Testimonials Section */}
-          <section className='bg-muted/50 px-4 py-16'>
-            <div className='container mx-auto max-w-6xl'>
-              <h2 className='mb-12 text-center text-3xl font-bold'>
-                Apa Kata Mereka?
-              </h2>
-              <div className='grid gap-8 md:grid-cols-3'>
-                {/* Testimonial 1 */}
-                <Card className='bg-card'>
-                  <CardContent className='pt-6'>
-                    <div className='mb-4 flex items-center gap-2'>
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <Star
-                          key={n}
-                          className='h-5 w-5 fill-yellow-400 text-yellow-400'
-                        />
-                      ))}
-                    </div>
-                    <p className='mb-4 text-card-foreground'>
-                      "Berkat IQ Sejawat, saya berhasil lulus UKAI di kesempatan
-                      pertama!"
-                    </p>
-                    <div className='flex items-center gap-3'>
-                      <img
-                        src='https://randomuser.me/api/portraits/women/1.jpg'
-                        alt='Dr. Sarah'
-                        className='h-10 w-10 rounded-full object-cover'
-                      />
-                      <div>
-                        <div className='font-semibold'>Dr. Sarah</div>
-                        <div className='text-sm text-muted-foreground'>
-                          Universitas Indonesia
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                {/* Testimonial 2 */}
-                <Card className='bg-card'>
-                  <CardContent className='pt-6'>
-                    <div className='mb-4 flex items-center gap-2'>
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <Star
-                          key={n}
-                          className='h-5 w-5 fill-yellow-400 text-yellow-400'
-                        />
-                      ))}
-                    </div>
-                    <p className='mb-4 text-card-foreground'>
-                      "Materinya lengkap dan mudah dipahami. Mentornya juga
-                      sangat membantu!"
-                    </p>
-                    <div className='flex items-center gap-3'>
-                      <img
-                        src='https://randomuser.me/api/portraits/men/2.jpg'
-                        alt='Dr. Andi'
-                        className='h-10 w-10 rounded-full object-cover'
-                      />
-                      <div>
-                        <div className='font-semibold'>Dr. Andi</div>
-                        <div className='text-sm text-muted-foreground'>
-                          Universitas Gadjah Mada
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                {/* Testimonial 3 */}
-                <Card className='bg-card'>
-                  <CardContent className='pt-6'>
-                    <div className='mb-4 flex items-center gap-2'>
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <Star
-                          key={n}
-                          className='h-5 w-5 fill-yellow-400 text-yellow-400'
-                        />
-                      ))}
-                    </div>
-                    <p className='mb-4 text-card-foreground'>
-                      "Platform terbaik untuk persiapan UKAI. Worth it banget!"
-                    </p>
-                    <div className='flex items-center gap-3'>
-                      <img
-                        src='https://randomuser.me/api/portraits/women/3.jpg'
-                        alt='Dr. Maya'
-                        className='h-10 w-10 rounded-full object-cover'
-                      />
-                      <div>
-                        <div className='font-semibold'>Dr. Maya</div>
-                        <div className='text-sm text-muted-foreground'>
-                          Universitas Airlangga
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </section>
-
           {/* FAQ Section */}
-          <section className='px-4 py-16'>
+          <section className='bg-muted px-4 py-16'>
             <div className='container mx-auto max-w-3xl'>
               <h2 className='mb-12 text-center text-3xl font-bold'>
                 Pertanyaan Umum
@@ -617,7 +595,7 @@ export default function Home() {
         </main>
 
         {/* Footer */}
-        <footer className='mt-auto bg-slate-900 px-4 py-12 text-slate-200'>
+        <footer className='mt-auto bg-[hsl(20_14.3%_4.1%)] px-4 py-12 text-slate-200'>
           <div className='container mx-auto max-w-6xl'>
             <div className='grid gap-8 md:grid-cols-4'>
               <div>

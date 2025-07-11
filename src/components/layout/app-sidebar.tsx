@@ -104,6 +104,19 @@ export default function AppSidebar({ userGrade }: AppSidebarProps) {
 
   const handleLogout = async () => {
     try {
+      // Ambil deviceId
+      const deviceId =
+        typeof window !== 'undefined' ? localStorage.getItem('deviceId') : '';
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      if (user && deviceId) {
+        await fetch('/api/user-session', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id, deviceId })
+        });
+      }
       // Hapus session di Supabase terlebih dahulu
       const { error } = await supabase.auth.signOut();
       if (error) {

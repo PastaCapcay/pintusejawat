@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -125,8 +125,16 @@ export default function SignUpPage() {
 
   return (
     <div className='container relative grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0'>
-      <div className='relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex'>
-        <div className='absolute inset-0 bg-primary' />
+      <div
+        className='relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex'
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=2070&auto=format&fit=crop')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className='absolute inset-0 bg-black opacity-60' />
         <div className='relative z-20 flex items-center text-lg font-medium'>
           <img src='/favicon-32x32.png' alt='Logo' className='mr-2 h-8 w-8' />
           IQ Sejawat
@@ -213,7 +221,14 @@ export default function SignUpPage() {
               </CardContent>
               <CardFooter className='flex flex-col gap-4'>
                 <Button className='w-full' type='submit' disabled={isLoading}>
-                  {isLoading ? 'Loading...' : 'Daftar'}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                      <span>Memproses...</span>
+                    </>
+                  ) : (
+                    'Daftar'
+                  )}
                 </Button>
                 <div className='text-center text-sm text-muted-foreground'>
                   Sudah punya akun?{' '}

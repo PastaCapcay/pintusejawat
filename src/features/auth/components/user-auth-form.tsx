@@ -1,93 +1,90 @@
 'use client';
+import { useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import * as z from 'zod';
-import GithubSignInButton from './github-auth-button';
 
-const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' })
-});
+interface UserAuthFormProps {
+  onSignIn: (userId: string) => Promise<void>;
+}
 
-type UserFormValue = z.infer<typeof formSchema>;
+export function UserAuthForm({ onSignIn }: UserAuthFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const supabase = createClientComponentClient();
 
-export default function UserAuthForm() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
-  const [loading, startTransition] = useTransition();
-  const defaultValues = {
-    email: 'demo@gmail.com'
-  };
-  const form = useForm<UserFormValue>({
-    resolver: zodResolver(formSchema),
-    defaultValues
-  });
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
 
-  const onSubmit = async (data: UserFormValue) => {
-    startTransition(() => {
-      console.log('continue with email clicked');
-      toast.success('Signed In Successfully!');
-    });
-  };
+    try {
+      setIsLoading(true);
+
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (authError) {
+        toast.error(authError.message);
+        return;
+      }
+
+      if (!authData.user) {
+        throw new Error('Login gagal: tidak ada data user');
+      }
+
+      await onSignIn(authData.user.id);
+      toast.success('Login berhasil!');
+    } catch (error) {
+      console.error('Error during login:', error);
+      toast.error(
+        error instanceof Error ? error.message : 'Terjadi kesalahan saat login'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='w-full space-y-2'
-        >
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type='email'
-                    placeholder='Enter your email...'
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            disabled={loading}
-            className='mt-2 ml-auto w-full'
-            type='submit'
-          >
-            Continue With Email
+    <div className='grid gap-6'>
+      <form onSubmit={onSubmit}>
+        <div className='grid gap-4'>
+          <div className='grid gap-2'>
+            <Label htmlFor='email'>Email</Label>
+            <Input
+              id='email'
+              placeholder='name@example.com'
+              type='email'
+              autoCapitalize='none'
+              autoComplete='email'
+              autoCorrect='off'
+              disabled={isLoading}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className='grid gap-2'>
+            <Label htmlFor='password'>Password</Label>
+            <Input
+              id='password'
+              placeholder='********'
+              type='password'
+              disabled={isLoading}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <Button disabled={isLoading}>
+            {isLoading ? 'Sedang Login...' : 'Login'}
           </Button>
-        </form>
-      </Form>
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
         </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-background text-muted-foreground px-2'>
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <GithubSignInButton />
-    </>
+      </form>
+    </div>
   );
 }

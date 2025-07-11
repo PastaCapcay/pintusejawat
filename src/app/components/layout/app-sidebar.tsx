@@ -20,7 +20,7 @@ import {
   CollapsibleContent
 } from '@/components/ui/collapsible';
 import { IconChevronRight } from '@tabler/icons-react';
-import type { LucideIcon } from 'lucide-react';
+
 import {
   Trophy,
   CreditCard,
@@ -32,17 +32,22 @@ import {
   BookOpen,
   LayoutDashboard
 } from 'lucide-react';
+import { useState, ElementType } from 'react';
+import Cookies from 'js-cookie';
+import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface NavigationItem {
   title: string;
   href: string;
-  icon: LucideIcon;
+  icon: ElementType;
   color?: string;
   isActive?: boolean;
   items?: {
     title: string;
     href: string;
-    icon: LucideIcon;
+    icon: ElementType;
     shortcut?: string[];
   }[];
 }
@@ -172,6 +177,8 @@ export default function AppSidebar({
 
     return filteredMenu;
   };
+
+  const { toast } = useToast();
 
   const navigationItems = getFilteredMenu();
 

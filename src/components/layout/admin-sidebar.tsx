@@ -121,6 +121,19 @@ export default function AdminSidebar() {
 
   const handleLogout = async () => {
     try {
+      // Ambil deviceId
+      const deviceId =
+        typeof window !== 'undefined' ? localStorage.getItem('deviceId') : '';
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      if (user && deviceId) {
+        await fetch('/api/user-session', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id, deviceId })
+        });
+      }
       // Hapus session di Supabase
       const { error } = await supabase.auth.signOut();
       if (error) {
@@ -134,12 +147,6 @@ export default function AdminSidebar() {
         'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       document.cookie =
         'sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-
-      // Hapus session di server
-      await fetch('/api/auth/session', {
-        method: 'DELETE',
-        credentials: 'include'
-      });
 
       // Clear session storage
       sessionStorage.clear();

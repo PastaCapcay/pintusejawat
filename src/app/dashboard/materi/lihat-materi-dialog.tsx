@@ -4,7 +4,8 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogDescription
 } from '@/components/ui/dialog';
 import { JenisMateri } from './tambah-materi-dialog';
 
@@ -86,6 +87,11 @@ export function LihatMateriDialog({
           <DialogTitle className='text-xl font-semibold'>
             {materi.nama}
           </DialogTitle>
+          <DialogDescription className='text-sm text-muted-foreground'>
+            {materi.jenis === JenisMateri.VIDEO
+              ? 'Video Pembelajaran'
+              : 'Dokumen PDF'}
+          </DialogDescription>
         </DialogHeader>
         <div className='flex-1 overflow-hidden bg-muted/5'>
           {renderContent()}

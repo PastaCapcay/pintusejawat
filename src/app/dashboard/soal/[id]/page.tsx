@@ -9,6 +9,7 @@ import { TambahSoalDialog } from './tambah-soal-dialog';
 import { EditSoalDialog } from './edit-soal-dialog';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface PageProps {
   params: {
@@ -29,6 +30,7 @@ export default function DetailSoalPage({ params }: PageProps) {
   const [data, setData] = useState<Soal[]>([]);
   const [paketSoal, setPaketSoal] = useState<PaketSoal | null>(null);
   const id = params.id;
+  const [isLoading, setIsLoading] = useState(true);
   const [showTambahDialog, setShowTambahDialog] = useState(false);
   const [editingSoal, setEditingSoal] = useState<Soal | null>(null);
 
@@ -51,6 +53,8 @@ export default function DetailSoalPage({ params }: PageProps) {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Terjadi kesalahan saat mengambil data');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,6 +65,34 @@ export default function DetailSoalPage({ params }: PageProps) {
   const handleSuccess = () => {
     fetchData();
   };
+
+  if (isLoading) {
+    return (
+      <div className='h-full flex-1 flex-col space-y-8 p-8 md:flex'>
+        <div className='flex items-center justify-between space-y-2'>
+          <div>
+            <Skeleton className='h-8 w-[250px]' />
+            <Skeleton className='mt-2 h-4 w-[400px]' />
+          </div>
+          <div className='flex items-center gap-4'>
+            <Skeleton className='h-10 w-[120px]' />
+          </div>
+        </div>
+        <div className='rounded-md border'>
+          <div className='space-y-4 p-4'>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className='flex items-center space-x-4'>
+                <Skeleton className='h-8 w-8' />
+                <Skeleton className='h-4 w-1/4' />
+                <Skeleton className='h-4 w-1/2' />
+                <Skeleton className='h-4 w-1/4' />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!paketSoal) {
     return (

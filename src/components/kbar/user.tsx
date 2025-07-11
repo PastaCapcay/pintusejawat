@@ -7,13 +7,16 @@ import {
   KBarPositioner,
   KBarProvider,
   KBarSearch,
-  Action
+  Action,
+  useKBar
 } from 'kbar';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import RenderResults from './render-result';
-import useThemeSwitching from './use-theme-switching';
 import { Grade } from '@prisma/client';
+
+import Cookies from 'js-cookie';
+import { useToast } from '@/components/ui/use-toast';
 
 interface UserKBarProps {
   children: React.ReactNode;
@@ -22,65 +25,62 @@ interface UserKBarProps {
 
 export default function UserKBar({ children, userGrade }: UserKBarProps) {
   const router = useRouter();
+  const { query } = useKBar();
 
   const actions = useMemo(() => {
     const navigationItems = getNavItemsByGrade(userGrade);
     const kbarActions: Action[] = [];
 
-    // Konversi menu items menjadi kbar actions
     navigationItems.forEach((item) => {
-      if (item.items) {
-        // Jika item memiliki submenu, buat section untuk grouping
-        const sectionAction: Action = {
+      if (item.title === 'Tryout Gratis') {
+        kbarActions.push({
           id: item.href,
           name: item.title,
           shortcut: [],
           keywords: item.title.toLowerCase(),
-          section: item.title
-        };
-        kbarActions.push(sectionAction);
-
-        // Tambahkan submenu items
+          perform: () => router.push(item.href),
+          section: 'Akses Cepat'
+        });
+      } else if (item.items) {
         item.items.forEach((subItem) => {
           if (subItem.title !== 'Logout') {
-            const subAction: Action = {
+            kbarActions.push({
               id: subItem.href,
               name: subItem.title,
               shortcut: subItem.shortcut || [],
               keywords: `${item.title.toLowerCase()} ${subItem.title.toLowerCase()}`,
               perform: () => router.push(subItem.href),
               section: item.title
-            };
-            kbarActions.push(subAction);
+            });
           }
         });
       } else {
-        // Item tanpa submenu
-        const mainAction: Action = {
+        kbarActions.push({
           id: item.href,
           name: item.title,
           shortcut: [],
           keywords: item.title.toLowerCase(),
           perform: () => router.push(item.href)
-        };
-        kbarActions.push(mainAction);
+        });
       }
     });
 
     return kbarActions;
-  }, [router, userGrade]);
+  }, [router, userGrade, query]);
 
   return (
-    <KBarProvider actions={actions}>
-      <KBarPortal>
-        <KBarPositioner className='z-50 bg-black/50 p-4'>
-          <KBarAnimator className='bg-popover text-popover-foreground w-full max-w-xl rounded-lg shadow-lg'>
-            <KBarSearch className='w-full bg-transparent px-4 py-3 text-sm outline-none' />
-            <RenderResults />
-          </KBarAnimator>
-        </KBarPositioner>
-      </KBarPortal>
-      {children}
-    </KBarProvider>
+    <>
+      <KBarProvider actions={actions}>
+        <KBarPortal>
+          <KBarPositioner className='z-50 bg-black/50 p-4'>
+            <KBarAnimator className='w-full max-w-xl rounded-lg bg-popover text-popover-foreground shadow-lg'>
+              <KBarSearch className='w-full bg-transparent px-4 py-3 text-sm outline-none' />
+              <RenderResults />
+            </KBarAnimator>
+          </KBarPositioner>
+        </KBarPortal>
+        {children}
+      </KBarProvider>
+    </>
   );
 }

@@ -16,8 +16,9 @@ import { Input } from '@/components/ui/input';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useToast } from '@/components/ui/use-toast';
-import { ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import { getDeviceId } from '@/lib/device-id';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,7 +32,6 @@ const formSchema = z.object({
 export default function SignInPage() {
   const router = useRouter();
   const supabase = createClientComponentClient();
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,7 +43,7 @@ export default function SignInPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Bersihkan semua session yang ada      sessionStorage.clear();      localStorage.removeItem('supabase.auth.token');      localStorage.removeItem('supabase.auth.expires_at');      localStorage.removeItem('supabase.auth.refresh_token');            // Hapus cookie      document.cookie = 'supabase-auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';      document.cookie = 'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';      document.cookie = 'sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';      // Sign out dari sesi yang ada (jika ada)      await supabase.auth.signOut();      // Hapus session di server      await fetch('/api/auth/session', {        method: 'DELETE',        credentials: 'include'      });      // Login dengan kredensial baru
+      console.log('Mencoba login dengan kredensial baru...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password
@@ -53,35 +53,69 @@ export default function SignInPage() {
         throw error;
       }
 
+      // Ambil deviceId
+      const deviceId = getDeviceId();
+      // Simpan userId ke localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('userId', data.user.id);
+      }
+      // Panggil endpoint user-session
+      const sessionRes = await fetch('/api/user-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: data.user.id, deviceId })
+      });
+      if (!sessionRes.ok) {
+        const err = await sessionRes.json();
+        throw new Error(err.error || 'Gagal update session user');
+      }
+
+      console.log('Login berhasil, mengecek role user...');
       // Cek role user
       const response = await fetch(`/api/user/role?userId=${data.user.id}`);
       const { role } = await response.json();
 
-      // Redirect berdasarkan role
-      if (role === 'ADMIN') {
-        router.push('/dashboard');
-      } else {
-        router.push('/dashboarduser');
-      }
-
-      toast({
-        title: 'Login Berhasil',
-        description: 'Selamat datang kembali!'
+      toast.success('Login Berhasil!', {
+        description: 'Selamat datang kembali. Anda akan diarahkan...',
+        duration: 2000
       });
+
+      // Redirect berdasarkan role setelah notifikasi muncul
+      setTimeout(() => {
+        if (role === 'ADMIN') {
+          router.push('/dashboard');
+        } else {
+          router.push('/dashboarduser');
+        }
+      }, 1500);
     } catch (error: any) {
       console.error('Error during login:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: error.message || 'Terjadi kesalahan saat login.'
-      });
+      if (error.message.includes('Invalid login credentials')) {
+        toast.error('Login Gagal', {
+          description:
+            'Email atau password yang Anda masukkan salah. Silakan coba lagi.'
+        });
+      } else {
+        toast.error('Login Gagal', {
+          description:
+            'Terjadi kesalahan yang tidak diketahui. Silakan coba beberapa saat lagi.'
+        });
+      }
     }
   }
 
   return (
     <div className='container relative grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0'>
-      <div className='relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex'>
-        <div className='absolute inset-0 bg-primary' />
+      <div
+        className='relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex'
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=2070&auto=format&fit=crop')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className='absolute inset-0 bg-black opacity-60' />
         <div className='relative z-20 flex items-center text-lg font-medium'>
           <img src='/favicon-32x32.png' alt='Logo' className='mr-2 h-8 w-8' />
           IQ Sejawat
@@ -148,8 +182,19 @@ export default function SignInPage() {
                   </FormItem>
                 )}
               />
-              <Button type='submit' className='w-full'>
-                Login
+              <Button
+                type='submit'
+                className='w-full'
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <>
+                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    <span>Memproses...</span>
+                  </>
+                ) : (
+                  'Login'
+                )}
               </Button>
             </form>
           </Form>

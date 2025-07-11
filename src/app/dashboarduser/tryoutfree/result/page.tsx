@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Trophy, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Trophy, ArrowLeft, CheckCircle2, Instagram } from 'lucide-react';
 
 const calculateScore = (
   correctAnswers: number,
@@ -75,8 +75,7 @@ export default function TryoutResultPage() {
 
               <div className='flex flex-col gap-2 pt-4'>
                 <Button
-                  variant='default'
-                  className='w-full'
+                  className='mt-4 w-full'
                   onClick={() =>
                     window.open(
                       'https://www.instagram.com/iq.sejawat/',
@@ -84,7 +83,20 @@ export default function TryoutResultPage() {
                     )
                   }
                 >
+                  <Instagram className='mr-2 h-4 w-4' />
                   Follow Instagram Kami
+                </Button>
+                <Button
+                  className='mt-2 w-full'
+                  variant='outline'
+                  onClick={() =>
+                    window.open(
+                      'https://docs.google.com/forms/d/1weVcxGDDsG6O3BWqOtbm6_r3c24MyQ6pH1qxKd_PnRk/viewform?edit_requested=true',
+                      '_blank'
+                    )
+                  }
+                >
+                  Saran & Masukan
                 </Button>
                 <Button
                   variant='outline'

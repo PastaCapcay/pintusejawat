@@ -49,19 +49,6 @@ export default function SoalPage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className='flex h-full items-center justify-center'>
-        <div className='text-center'>
-          <div className='text-lg font-medium'>Memuat data...</div>
-          <div className='text-muted-foreground text-sm'>
-            Mohon tunggu sebentar
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className='flex h-full items-center justify-center'>
@@ -103,6 +90,7 @@ export default function SoalPage() {
       <DataTable
         columns={columns}
         data={data}
+        isLoading={isLoading}
         meta={{
           refreshData: fetchData,
           editState: {

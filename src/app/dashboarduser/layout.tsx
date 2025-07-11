@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import UserKBar from '@/components/kbar/user';
 import { cookies } from 'next/headers';
+import { Toaster } from 'sonner';
 
 export default async function DashboardUserLayout({
   children
@@ -40,6 +41,7 @@ export default async function DashboardUserLayout({
 
   return (
     <UserKBar userGrade={dbUser?.grade || 'FREE'}>
+      <Toaster richColors />
       <SidebarProvider defaultOpen={defaultOpen}>
         <div className='relative flex min-h-screen w-full'>
           <AppSidebar userGrade={dbUser?.grade || 'FREE'} />

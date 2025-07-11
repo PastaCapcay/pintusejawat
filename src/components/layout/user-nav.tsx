@@ -59,6 +59,18 @@ export function UserNav(): JSX.Element | null {
 
   const handleLogout = async () => {
     try {
+      const deviceId =
+        typeof window !== 'undefined' ? localStorage.getItem('deviceId') : '';
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      if (user && deviceId) {
+        await fetch('/api/user-session', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id, deviceId })
+        });
+      }
       const { error } = await supabase.auth.signOut();
       if (error) {
         throw error;
@@ -103,7 +115,9 @@ export function UserNav(): JSX.Element | null {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+          <DropdownMenuItem
+            onClick={() => router.push('/dashboarduser/profile')}
+          >
             Profile
           </DropdownMenuItem>
         </DropdownMenuGroup>

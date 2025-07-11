@@ -32,6 +32,11 @@ export async function GET() {
         },
         createdAt: {
           gte: thirtyDaysAgo
+        },
+        paketSoal: {
+          id: {
+            not: 'TRYOUT_FREE'
+          }
         }
       },
       select: {

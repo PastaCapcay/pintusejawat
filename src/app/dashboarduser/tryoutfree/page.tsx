@@ -3,24 +3,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trophy, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 export default function TryoutFreePage() {
-  const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     const error = searchParams.get('error');
     if (error === 'already_taken') {
       setHasError(true);
-      toast({
-        variant: 'destructive',
-        title: 'Akses Terbatas',
+      toast.error('Akses Terbatas', {
         description:
           'Anda sudah menggunakan kesempatan tryout gratis. Silakan upgrade untuk akses penuh.',
         duration: 5000
@@ -28,13 +36,29 @@ export default function TryoutFreePage() {
     }
   }, [searchParams, toast]);
 
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === 'tryoutiqsejawat2k25') {
+      toast.success('Password Benar', {
+        description: 'Anda akan diarahkan untuk memulai tryout.',
+        duration: 2000
+      });
+      setIsDialogOpen(false);
+      startTryout();
+    } else {
+      toast.error('Password Salah', {
+        description: 'Password yang Anda masukkan salah.'
+      });
+      setPassword('');
+    }
+  };
+
   const startTryout = async () => {
     if (isRedirecting) return;
     setIsRedirecting(true);
 
     // Tampilkan toast
-    toast({
-      title: 'Membuka Instagram IQ Sejawat',
+    toast.info('Membuka Instagram IQ Sejawat', {
       description:
         'Anda akan diarahkan ke Instagram @iq.sejawat. Silakan follow untuk mendapatkan update terbaru!',
       duration: 5000
@@ -148,14 +172,38 @@ export default function TryoutFreePage() {
                 Upgrade Sekarang
               </Button>
             ) : (
-              <Button
-                size='lg'
-                className='w-full max-w-md py-6 text-lg'
-                onClick={startTryout}
-                disabled={isRedirecting}
-              >
-                Mulai Tryout Gratis
-              </Button>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size='lg'
+                    className='w-full max-w-md py-6 text-lg'
+                    disabled={isRedirecting}
+                  >
+                    Mulai Tryout Gratis
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Akses Tryout Gratis</DialogTitle>
+                    <DialogDescription>
+                      Masukkan password untuk mengakses tryout gratis.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handlePasswordSubmit} className='mt-4'>
+                    <div className='grid gap-4'>
+                      <Input
+                        type='password'
+                        placeholder='Password'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <Button type='submit' disabled={isRedirecting}>
+                        Submit
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         </div>

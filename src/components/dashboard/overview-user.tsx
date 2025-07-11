@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 
 // Definisikan fitur berdasarkan grade
@@ -50,6 +51,36 @@ const nextUpgrade = {
   }
 };
 
+function OverviewSkeleton() {
+  return (
+    <div className='grid gap-4 p-4 md:p-6'>
+      <Card className='mx-auto w-full max-w-4xl'>
+        <CardHeader className='flex flex-col items-center justify-between space-y-2 pb-2 md:flex-row md:space-y-0'>
+          <Skeleton className='h-8 w-48' />
+        </CardHeader>
+        <CardContent>
+          <div className='mb-4 space-y-2'>
+            <Skeleton className='h-6 w-1/2' />
+            <Skeleton className='h-4 w-1/4' />
+          </div>
+          <div className='space-y-2'>
+            <Skeleton className='h-4 w-1/3' />
+            <div className='ml-4 space-y-2'>
+              <Skeleton className='h-4 w-full' />
+              <Skeleton className='h-4 w-5/6' />
+              <Skeleton className='h-4 w-4/5' />
+            </div>
+          </div>
+          <div className='mt-6'>
+            <Skeleton className='mb-2 h-5 w-2/5' />
+            <Skeleton className='h-10 w-36' />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export function Overview() {
   const [userName, setUserName] = useState('User');
   const [userGrade, setUserGrade] = useState('FREE');
@@ -90,15 +121,7 @@ export function Overview() {
   };
 
   if (loading) {
-    return (
-      <div className='grid gap-4 p-4 md:p-6'>
-        <Card className='mx-auto w-full max-w-4xl'>
-          <CardContent className='p-6'>
-            <div className='text-center'>Memuat data...</div>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <OverviewSkeleton />;
   }
 
   return (
