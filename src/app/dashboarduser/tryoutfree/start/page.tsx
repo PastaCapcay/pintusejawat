@@ -1,26 +1,5 @@
 'use client';
 
-// Animasi shake untuk timer warning
-const style = document?.createElement?.('style');
-if (style && !document.getElementById('shake-keyframes')) {
-  style.id = 'shake-keyframes';
-  style.innerHTML = `
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      20% { transform: translateX(-2px); }
-      40% { transform: translateX(2px); }
-      60% { transform: translateX(-2px); }
-      80% { transform: translateX(2px); }
-      100% { transform: translateX(0); }
-    }
-    .animate-shake {
-      animation: shake 0.5s linear 1;
-      will-change: transform;
-    }
-  `;
-  document.head.appendChild(style);
-}
-
 declare global {
   interface Window {
     __tryoutFreePushState?: boolean;
@@ -70,6 +49,31 @@ interface Question {
 }
 
 export default function TryoutStartPage() {
+  // Inject animasi shake hanya di client
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      if (!document.getElementById('shake-keyframes')) {
+        const style = document.createElement('style');
+        style.id = 'shake-keyframes';
+        style.innerHTML = `
+          @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-2px); }
+            40% { transform: translateX(2px); }
+            60% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
+          }
+          .animate-shake {
+            animation: shake 0.5s linear 1;
+            will-change: transform;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+  }, []);
+
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
