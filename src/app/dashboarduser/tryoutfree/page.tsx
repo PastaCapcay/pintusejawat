@@ -106,9 +106,8 @@ export default function TryoutFreePage() {
                 gratis ini, Anda akan mendapatkan:
               </p>
               <ul className='ml-4 list-inside list-disc space-y-2'>
-                <li>Akses ke 10 soal latihan UKAI terbaru</li>
-                <li>Waktu pengerjaan 10 menit</li>
-                <li>Pembahasan singkat setiap soal</li>
+                <li>Akses ke 50 soal latihan UKAI terbaru</li>
+                <li>Waktu pengerjaan 50 menit</li>
                 <li>Nilai dan analisis kemampuan per bidang kompetensi</li>
               </ul>
             </CardContent>
@@ -129,7 +128,6 @@ export default function TryoutFreePage() {
                 <li>
                   Hasil akan langsung ditampilkan setelah selesai mengerjakan
                 </li>
-                <li>Pembahasan hanya diberikan untuk 3 soal pertama</li>
                 <li>Soal yang diberikan merupakan contoh soal UKAI</li>
               </ul>
             </CardContent>

@@ -25,6 +25,7 @@ export default function TryoutResultPage() {
   const router = useRouter();
   const score = searchParams.get('score');
   const totalQuestions = searchParams.get('total');
+  const timeSpent = searchParams.get('timeSpent');
 
   if (!score || !totalQuestions) {
     router.push('/dashboarduser/tryoutfree');
@@ -33,6 +34,16 @@ export default function TryoutResultPage() {
 
   const finalScore = calculateScore(parseInt(score), parseInt(totalQuestions));
   const grade = getGrade(finalScore);
+
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+  const timeSpentSeconds = timeSpent ? parseInt(timeSpent) : 0; // fallback 0 jika tidak ada
 
   return (
     <div className='h-screen overflow-y-auto'>
@@ -50,6 +61,15 @@ export default function TryoutResultPage() {
                 <div className='mb-2 text-6xl font-bold'>{finalScore}</div>
                 <div className={`text-xl font-medium ${grade.color}`}>
                   {grade.text}
+                </div>
+                <div className='mt-4 flex flex-col items-center gap-1 text-base'>
+                  <span>
+                    <b>{score}</b> dari <b>{totalQuestions}</b> soal dijawab
+                    benar
+                  </span>
+                  <span>
+                    Waktu pengerjaan: <b>{formatTime(timeSpentSeconds)}</b>
+                  </span>
                 </div>
               </div>
 

@@ -67,17 +67,13 @@ export async function GET() {
     // Ambil semua soal (tanpa pembatasan 10 soal)
     const selectedSoals = shuffledSoals;
 
-    // Hapus jawabanBenar dari response untuk keamanan
-    const sanitizedSoals = selectedSoals.map(
-      ({ jawabanBenar, ...soal }) => soal
-    );
-
-    // Log jumlah soal yang dikirim
+    // Kirim semua field soal, termasuk jawabanBenar, agar frontend bisa menghitung skor dengan benar
+    // (Frontend tidak akan merender jawabanBenar ke UI)
     console.log(
-      `[TRYOUT_FREE] Sending ${sanitizedSoals.length} random questions`
+      `[TRYOUT_FREE] Sending ${selectedSoals.length} random questions (with kunci jawaban for scoring only)`
     );
 
-    return NextResponse.json(sanitizedSoals);
+    return NextResponse.json(selectedSoals);
   } catch (error) {
     console.error('Error fetching random soal:', error);
     return NextResponse.json(
